@@ -1,0 +1,50 @@
+package com.github.jakz.billsplit;
+
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
+import com.pixbits.lib.ui.UIUtils;
+import com.pixbits.lib.ui.WrapperFrame;
+import com.pixbits.lib.ui.charts.BarChartPanel;
+import com.pixbits.lib.ui.charts.Measurable;
+import com.pixbits.lib.ui.charts.PieChartPanel;
+
+public class App 
+{
+  static class Sample implements Measurable
+  {
+    final float v;
+    public Sample(float v) { this.v = v; }
+    @Override public float chartValue() { return v; }
+  }
+  
+  public static void main( String[] args )
+  {
+    Person jack = new Person("Jack");
+    Person pappe = new Person("Pappe");
+    Person pig = new Person("Pig");
+    Person vicky = new Person("Vicky");
+    
+    Group group = new Group(jack, pappe, pig, vicky);
+    group.stream().forEach(p -> p.group(group));
+    
+    Expense expense = Expense.of(Amount.of("34.10 USD"), pappe, Timestamp.of(2017, 8, 8), DefaultCategory.ALCHOOL, "Birre Houston");
+    System.out.println(expense.amount());
+    
+    /*List<Sample> samples = new ArrayList<>();
+    for (int i = 0; i < 10; ++i)
+    {
+      samples.add(new Sample(ThreadLocalRandom.current().nextFloat()*50.0f));
+    }
+    
+    PieChartPanel<Sample> canvas = new PieChartPanel<Sample>(new Dimension(800,600));
+    canvas.setAutoRebuild(true);
+    canvas.add(samples);
+    
+    WrapperFrame<?> frame = UIUtils.buildFrame(canvas, "Chart");
+    frame.exitOnClose();
+    frame.setVisible(true);*/
+  }
+}
