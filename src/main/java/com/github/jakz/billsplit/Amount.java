@@ -17,12 +17,11 @@ public class Amount
   
   private MonetaryAmount amount;
   private Currency currency;
-  
   public Amount(double value, Currency currency) { this((float)value, currency); }
 
   public Amount(float value, Currency currency)
   {
-    this(Money.of(value, currency.code), currency);
+    this(Money.of(value, currency.ref), currency);
   }
   
   private Amount(MonetaryAmount value, Currency currency)
@@ -34,7 +33,7 @@ public class Amount
   
   public String toString()
   {
-    return rounding.apply(amount).getNumber().toString() + currency.symbol;
+    return rounding.apply(amount).toString();
   }
   
   public Currency currency() { return currency; }
@@ -72,8 +71,18 @@ public class Amount
     throw new IllegalArgumentException("No currency found for string "+string);
   }
   
-  public Amount add(Amount amount)
+  public Amount with(Currency currency)
   {
+    return new Amount(amount, currency);
+  }
+  
+  public Amount multiply(float v)
+  {
+    return new Amount(amount.multiply(v), currency);
+  }
+  
+  public Amount add(Amount amount)
+  {    
     if (currency != amount.currency)
       throw new IllegalArgumentException("Cannot add two amounts of different currencies");
     

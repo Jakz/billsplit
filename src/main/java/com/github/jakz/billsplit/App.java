@@ -23,15 +23,18 @@ public class App
   public static void main( String[] args )
   {
     Person jack = new Person("Jack");
-    Person pappe = new Person("Pappe");
-    Person pig = new Person("Pig");
     Person vicky = new Person("Vicky");
     
-    Group group = new Group(jack, pappe, pig, vicky);
+    Group group = new Group(jack, vicky);
     group.stream().forEach(p -> p.group(group));
     
-    Expense expense = Expense.of(Amount.of("34.10 USD"), pappe, Timestamp.of(2017, 8, 8), DefaultCategory.ALCHOOL, "Birre Houston");
-    System.out.println(expense.amount());
+    Expense expense = Expense.of(Amount.of("34.10 USD"), jack, Timestamp.of(2017, 8, 8), DefaultCategory.ALCHOOL, "Birre Houston");
+    
+    ExchangeRates rates = new ExchangeRates();
+    
+    Amount camount = rates.convertedValue(expense.amount(), Currency.EUR);
+    
+    System.out.println(camount);
     
     /*List<Sample> samples = new ArrayList<>();
     for (int i = 0; i < 10; ++i)

@@ -2,25 +2,30 @@ package com.github.jakz.billsplit;
 
 import java.util.Arrays;
 
+import javax.money.CurrencyQuery;
+import javax.money.CurrencyUnit;
+import javax.money.Monetary;
+
 public enum Currency
 {
-  EUR("EUR", "€"),
-  USD("USD", "$")
+  USD("USD"),
+  EUR("EUR")
   ;
   
-  final String code;
-  final String symbol;
+  public final CurrencyUnit ref;
   
-  private Currency(String code, String symbol)
+  private Currency(String code)
   {
-    this.code = code;
-    this.symbol = symbol;
+    ref = Monetary.getCurrency(code);
   }
+  
+  public int number() { return ref.getNumericCode(); }
+  public String code() { return ref.getCurrencyCode(); }
   
   public static Currency forCode(String code)
   {
     return Arrays.stream(values())
-      .filter(c -> c.code.equals(code))
+      .filter(c -> c.code().equals(code))
       .findFirst().orElse(null);
   }
 }

@@ -22,6 +22,10 @@ public enum DefaultCategory implements Category
   
   MUSEUM("Museum", ATTRACTION),
   
+  ACCOMODATION("Accomodation"),
+  HOTEL("Hotel", ACCOMODATION),
+  HOSTEL("Hostel", ACCOMODATION),
+  
   GASOLINE("Gasoline", CAR_RENT)
   
   ;
