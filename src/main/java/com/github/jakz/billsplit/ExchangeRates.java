@@ -1,5 +1,6 @@
 package com.github.jakz.billsplit;
 
+import javax.money.MonetaryOperator;
 import javax.money.convert.MonetaryConversions;
 
 public class ExchangeRates
@@ -17,6 +18,13 @@ public class ExchangeRates
   
   public Amount convertedValue(Amount amount, Currency to)
   {
-    return amount.multiply(exchangeRateFor(amount.currency(), to)).with(to);
+    if (to != amount.currency())    
+      return amount.multiply(exchangeRateFor(amount.currency(), to)).with(to);
+    else
+      return amount.with(to);
   }
+  
+  private static ExchangeRates instance = new ExchangeRates();
+  public static ExchangeRates rates() { return instance; }
+  public static void setRates(ExchangeRates rates) { instance = rates; }
 }

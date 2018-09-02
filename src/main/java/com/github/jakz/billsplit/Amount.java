@@ -1,5 +1,7 @@
 package com.github.jakz.billsplit;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.IllegalFormatException;
 import java.util.Locale;
 import java.util.Objects;
@@ -8,7 +10,15 @@ import javax.money.Monetary;
 import javax.money.MonetaryAmount;
 import javax.money.MonetaryAmountFactory;
 import javax.money.MonetaryRounding;
+import javax.money.convert.ConversionQuery;
+import javax.money.convert.ConversionQueryBuilder;
+import javax.money.convert.CurrencyConversion;
+import javax.money.convert.ExchangeRateProvider;
+import javax.money.convert.MonetaryConversions;
+import javax.money.format.MonetaryAmountFormat;
+import javax.money.format.MonetaryFormats;
 
+import org.javamoney.moneta.ExchangeRateType;
 import org.javamoney.moneta.Money;
 
 public class Amount
@@ -17,6 +27,7 @@ public class Amount
   
   private MonetaryAmount amount;
   private Currency currency;
+  
   public Amount(double value, Currency currency) { this((float)value, currency); }
 
   public Amount(float value, Currency currency)
@@ -31,9 +42,10 @@ public class Amount
     this.amount = value;
   }
   
+  private static MonetaryAmountFormat formatter = MonetaryFormats.getAmountFormat(Locale.US);
   public String toString()
   {
-    return rounding.apply(amount).toString();
+    return formatter.format(amount).toString();
   }
   
   public Currency currency() { return currency; }
@@ -71,9 +83,24 @@ public class Amount
     throw new IllegalArgumentException("No currency found for string "+string);
   }
   
-  public Amount with(Currency currency)
+  public Amount convert(Currency currency)
   {
-    return new Amount(amount, currency);
+    return ExchangeRates.RATES.convertedValue(this, currency);
+  }
+  
+  public Amount with(Currency currency)
+  { 
+    if (currency == this.currency)
+      return new Amount(amount, currency);
+    else
+    {
+      MonetaryAmount newAmount = Monetary.getDefaultAmountFactory()
+          .setNumber(amount.getNumber())
+          .setCurrency(currency.ref)
+          .create();
+      
+      return new Amount(newAmount, currency);
+    }
   }
   
   public Amount multiply(float v)

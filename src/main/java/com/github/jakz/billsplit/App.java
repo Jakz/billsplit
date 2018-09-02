@@ -28,7 +28,8 @@ public class App
     Group group = new Group(jack, vicky);
     group.stream().forEach(p -> p.group(group));
     
-    Expense expense = Expense.of(Amount.of("34.10 USD"), jack, Timestamp.of(2017, 8, 8), DefaultCategory.ALCHOOL, "Birre Houston");
+    Expense expense = Expense.of(Amount.of("78.18 USD"), jack, Timestamp.of(2017, 9, 8), DefaultCategory.AIRPLANE, "Volo Santiago -> Calama");
+    expense.add(Amount.of("116.22 EUR"), vicky);
     
     ExchangeRates rates = new ExchangeRates();
     

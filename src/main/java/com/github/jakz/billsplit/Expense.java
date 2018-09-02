@@ -44,19 +44,25 @@ public class Expense
     return new Expense(amount, owner, timestamp, owner.group(), category, title, "");
   }
   
+  public void add(Amount amount, Person owner)
+  {
+    amounts.add(new Pair<>(owner, amount));
+  }
+  
   public Category category() { return category; }
   public Optional<Timestamp> timestamp() { return timestamp; }
   public Amount amount()
   { 
-    if (amounts.size() > 1)
-    {
-      return amounts.stream().reduce(
-          Amount.of(0.0f, amounts.get(0).second.currency()),
-          (a, p) -> a.add(p.second),
-          (a1, a2) -> a1.add(a2)
-      );
-    }
-    else
-      return amounts.get(0).second; 
+    return amount(amounts.get(0).second.currency());
   }
+  
+  public Amount amount(Currency currency)
+  {
+    return amounts.stream().reduce(
+        Amount.of(0.0f, currency),
+        (a, p) -> a.add(p.second.convert(currency)),
+        (a1, a2) -> a1.add(a2).convert(currency)
+    );
+  }
+  
 }
