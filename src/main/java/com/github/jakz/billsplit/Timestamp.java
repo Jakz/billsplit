@@ -15,4 +15,11 @@ public class Timestamp
   {
     return new Timestamp(LocalDate.of(year, month, day));
   }
+  
+  public int year() { return date.getYear(); }
+  public int month() { return date.getMonthValue(); }
+  public int day() { return date.getDayOfMonth(); }
+  
+  public int hashCode() { return date.hashCode(); }
+  public boolean equals(Object object) { return object instanceof Timestamp && ((Timestamp)object).date.equals(date); }
 }

@@ -37,6 +37,14 @@ public class Group
     return new Group(npersons);
   }
   
+  public Person forName(String nickname)
+  {
+    return persons.stream()
+      .filter(p -> p.nickname().equals(nickname))
+      .findFirst()
+      .orElse(null);
+  }
+  
   public Stream<Person> stream() { return persons.stream(); }
   
   

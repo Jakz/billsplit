@@ -10,7 +10,8 @@ import junit.framework.TestSuite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
   MultiAmountTests.class,
-  ExchangeRatesTests.class
+  ExchangeRatesTests.class,
+  JsonTests.class
 })
 public class TestsSuite
 {
