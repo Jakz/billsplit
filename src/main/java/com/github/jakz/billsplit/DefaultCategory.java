@@ -26,7 +26,9 @@ public enum DefaultCategory implements Category
   HOTEL("Hotel", ACCOMODATION),
   HOSTEL("Hostel", ACCOMODATION),
   
-  GASOLINE("Gasoline", CAR_RENT)
+  GASOLINE("Gasoline", CAR_RENT),
+  
+  HEALTH("Health")
   
   ;
   

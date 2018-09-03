@@ -6,7 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class MultiAmount implements Iterable<Amount>
+import com.pixbits.lib.ui.charts.Measurable;
+
+public class MultiAmount implements Iterable<Amount>, Measurable
 {
   private List<Amount> amounts;
   
@@ -34,4 +36,7 @@ public class MultiAmount implements Iterable<Amount>
   public Stream<Amount> stream() { return amounts.stream(); }
   public Iterator<Amount> iterator() { return amounts.iterator(); }
   public Amount[] array() { return amounts.toArray(new Amount[amounts.size()]); }
+
+  @Override
+  public float chartValue() { return collapse().chartValue(); }
 }

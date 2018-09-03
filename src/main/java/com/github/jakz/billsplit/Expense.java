@@ -68,10 +68,11 @@ public class Expense implements Measurable
     );
   }
   
-  public float chartValue()
-  {
-    return amount(ExchangeRates.rates().baseCurrency()).chartValue();
-  }
+  @Override
+  public float chartValue() { return amount(ExchangeRates.Provider.rates().baseCurrency()).chartValue(); }
+  
+  @Override
+  public String chartLabel() { return title; }
   
   public MultiAmount multiAmount()
   {    

@@ -10,6 +10,7 @@ import com.pixbits.lib.ui.WrapperFrame;
 import com.pixbits.lib.ui.charts.BarChartPanel;
 import com.pixbits.lib.ui.charts.Measurable;
 import com.pixbits.lib.ui.charts.PieChartPanel;
+import com.pixbits.lib.ui.charts.events.PieChartMouseListener;
 
 public class App 
 {
@@ -34,8 +35,30 @@ public class App
     ExpenseSet expenses = new ExpenseSet();
     expenses.add(expense);
     expenses.add(Expense.of(Amount.of("127.50 USD"), vicky, Timestamp.of(2019, 8, 9), DefaultCategory.AIRPLANE, "Volo Iquique -- Santiago"));
-    expenses.add(Expense.of(Amount.of("30 EUR"), vicky, Timestamp.of(2019, 8, 9), DefaultCategory.TAXI, "Taxi Casa -- Aeroporto"));
-        
+    expenses.add(Expense.of(Amount.of("30 EUR"), vicky, Timestamp.of(2019, 8, 13), DefaultCategory.TAXI, "Taxi Casa -- Aeroporto"));
+    expenses.add(Expense.of(Amount.of("10 EUR"), jack, Timestamp.of(2019, 8, 13), DefaultCategory.HEALTH, "Condoms"));
+    expenses.add(Expense.of(Amount.of("13.70 EUR"), vicky, Timestamp.of(2019, 8, 13), DefaultCategory.DINNER, "Cena Fiumicino"));
+
+    PieChartPanel<MultiAmount> panel = new PieChartPanel<>(new Dimension(600,600));
+    panel.addListener(new PieChartMouseListener() {
+      @Override public void enteredPie() { System.out.println("Entered Pie"); }
+      @Override public void exitedPie() { System.out.println("Exited Pie"); }
+      
+      
+      @Override
+      public void enteredArc(Measurable measurable) { }
+
+      @Override
+      public void exitedArc(Measurable measurable) { }
+      
+    });
+    panel.add(expenses.amounts());
+    panel.refresh();
+    
+    WrapperFrame<?> frame = UIUtils.buildFrame(panel, "Expenses");
+    frame.exitOnClose();
+    frame.setVisible(true);
+    
     Amount camount = expenses.total(Currency.EUR);
     
     System.out.println(camount);

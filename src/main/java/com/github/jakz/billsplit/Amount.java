@@ -54,9 +54,10 @@ public class Amount implements Measurable
   
   public boolean equals(Object other) 
   { 
-    if (other instanceof Amount)
+    if (other instanceof Amount && ((Amount)other).currency == currency)
     {
-      return ((Amount)other).currency == currency && ((Amount)other).amount.equals(amount);
+      MonetaryAmount a1 = rounding.apply(amount), a2 = rounding.apply(((Amount)other).amount);
+      return a1.compareTo(a2) == 0;
     }
     else
       return false;
@@ -68,7 +69,7 @@ public class Amount implements Measurable
   public float unprecise() { return rounding.apply(amount).getNumber().floatValue(); }
   public float chartValue() { return unprecise(); }
   
-  public static Amount zero() { return Amount.of(0.0f, ExchangeRates.rates().baseCurrency()); }
+  public static Amount zero() { return Amount.of(0.0f, ExchangeRates.Provider.rates().baseCurrency()); }
   
   public static Amount of(float value, Currency currency)
   {
@@ -102,7 +103,7 @@ public class Amount implements Measurable
   
   public Amount convert(Currency currency)
   {
-    return ExchangeRates.rates().convertedValue(this, currency);
+    return ExchangeRates.Provider.rates().convertedValue(this, currency);
   }
   
   public Amount with(Currency currency)

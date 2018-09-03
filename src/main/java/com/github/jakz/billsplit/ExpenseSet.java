@@ -1,9 +1,11 @@
 package com.github.jakz.billsplit;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
-public class ExpenseSet
+public class ExpenseSet implements Iterable<Expense>
 {
   private final List<Expense> expenses;
   
@@ -22,4 +24,8 @@ public class ExpenseSet
         (a1, a2) -> a1.add(a2).convert(currency)
     );
   }
+
+  @Override
+  public Iterator<Expense> iterator() { return expenses.iterator(); }
+  public Stream<MultiAmount> amounts() { return expenses.stream().map(Expense::multiAmount); }
 }
