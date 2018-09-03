@@ -9,8 +9,7 @@ import junit.framework.TestSuite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-  //CompressorTest.class,
-  Tests.class
+  MultiAmountTests.class
 })
 public class TestsSuite
 {

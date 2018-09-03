@@ -24,6 +24,8 @@ public class ExchangeRates
       return amount.with(to);
   }
   
+  public Currency baseCurrency() { return Currency.EUR; }
+  
   private static ExchangeRates instance = new ExchangeRates();
   public static ExchangeRates rates() { return instance; }
   public static void setRates(ExchangeRates rates) { instance = rates; }

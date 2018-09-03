@@ -2,11 +2,14 @@ package com.github.jakz.billsplit;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.pixbits.lib.lang.Pair;
+import com.pixbits.lib.ui.charts.Measurable;
 
-public class Expense
+public class Expense implements Measurable
 {
   private final Category category;
   private final Optional<Timestamp> timestamp;
@@ -65,4 +68,20 @@ public class Expense
     );
   }
   
+  public float chartValue()
+  {
+    return amount(ExchangeRates.rates().baseCurrency()).chartValue();
+  }
+  
+  public MultiAmount multiAmount()
+  {    
+    Map<Currency, Amount> amounts = this.amounts.stream().collect(
+        Collectors.toMap(
+            p -> p.second.currency(), 
+            p -> p.second,
+            (i, j) -> i.add(j))
+   );
+    
+   return new MultiAmount(amounts.values());
+  }
 }

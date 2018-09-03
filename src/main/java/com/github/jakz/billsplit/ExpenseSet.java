@@ -16,6 +16,10 @@ public class ExpenseSet
   
   Amount total(Currency currency)
   {
-    return null;
+    return expenses.stream().reduce(
+        Amount.of(0.0f, currency),
+        (a, p) -> a.add(p.amount(currency)),
+        (a1, a2) -> a1.add(a2).convert(currency)
+    );
   }
 }

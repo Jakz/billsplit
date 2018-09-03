@@ -28,12 +28,15 @@ public class App
     Group group = new Group(jack, vicky);
     group.stream().forEach(p -> p.group(group));
     
-    Expense expense = Expense.of(Amount.of("78.18 USD"), jack, Timestamp.of(2017, 9, 8), DefaultCategory.AIRPLANE, "Volo Santiago -> Calama");
+    Expense expense = Expense.of(Amount.of("78.18 USD"), jack, Timestamp.of(2019, 8, 9), DefaultCategory.AIRPLANE, "Volo Santiago -- Calama");
     expense.add(Amount.of("116.22 EUR"), vicky);
     
-    ExchangeRates rates = new ExchangeRates();
-    
-    Amount camount = rates.convertedValue(expense.amount(), Currency.EUR);
+    ExpenseSet expenses = new ExpenseSet();
+    expenses.add(expense);
+    expenses.add(Expense.of(Amount.of("127.50 USD"), vicky, Timestamp.of(2019, 8, 9), DefaultCategory.AIRPLANE, "Volo Iquique -- Santiago"));
+    expenses.add(Expense.of(Amount.of("30 EUR"), vicky, Timestamp.of(2019, 8, 9), DefaultCategory.TAXI, "Taxi Casa -- Aeroporto"));
+        
+    Amount camount = expenses.total(Currency.EUR);
     
     System.out.println(camount);
     

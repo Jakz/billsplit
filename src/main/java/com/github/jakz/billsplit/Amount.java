@@ -21,7 +21,9 @@ import javax.money.format.MonetaryFormats;
 import org.javamoney.moneta.ExchangeRateType;
 import org.javamoney.moneta.Money;
 
-public class Amount
+import com.pixbits.lib.ui.charts.Measurable;
+
+public class Amount implements Measurable
 {
   private final static MonetaryRounding rounding = Monetary.getDefaultRounding();
   
@@ -48,10 +50,25 @@ public class Amount
     return formatter.format(amount).toString();
   }
   
+  public int hashCode() { return Objects.hash(amount, currency); }
+  
+  public boolean equals(Object other) 
+  { 
+    if (other instanceof Amount)
+    {
+      return ((Amount)other).currency == currency && ((Amount)other).amount.equals(amount);
+    }
+    else
+      return false;
+  }
+  
   public Currency currency() { return currency; }
   public long integral() { return rounding.apply(amount).getNumber().intValue(); }
   public long centesimals() { return rounding.apply(amount).getNumber().getAmountFractionNumerator(); }
   public float unprecise() { return rounding.apply(amount).getNumber().floatValue(); }
+  public float chartValue() { return unprecise(); }
+  
+  public static Amount zero() { return Amount.of(0.0f, ExchangeRates.rates().baseCurrency()); }
   
   public static Amount of(float value, Currency currency)
   {
@@ -85,7 +102,7 @@ public class Amount
   
   public Amount convert(Currency currency)
   {
-    return ExchangeRates.RATES.convertedValue(this, currency);
+    return ExchangeRates.rates().convertedValue(this, currency);
   }
   
   public Amount with(Currency currency)
