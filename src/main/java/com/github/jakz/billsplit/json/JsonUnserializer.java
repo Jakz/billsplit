@@ -2,11 +2,25 @@ package com.github.jakz.billsplit.json;
 
 import java.lang.reflect.Type;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.github.jakz.billsplit.Amount;
+import com.github.jakz.billsplit.Category;
+import com.github.jakz.billsplit.DefaultCategory;
+import com.github.jakz.billsplit.Environment;
 import com.github.jakz.billsplit.Expense;
+import com.github.jakz.billsplit.ExpenseAmounts;
+import com.github.jakz.billsplit.Group;
+import com.github.jakz.billsplit.Person;
+import com.github.jakz.billsplit.Share;
 import com.github.jakz.billsplit.Timestamp;
+import com.github.jakz.billsplit.WeightedGroup;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -15,35 +29,25 @@ import com.google.gson.JsonParseException;
 
 public class JsonUnserializer implements JsonDeserializer<Expense>
 {
+  private final Environment env;
   
-  private final Pattern timestampPattern = Pattern.compile("([0-9]{4})\\\\-([01][0-9])\\\\-([0-3][0-9])");
-  
-  private Timestamp parseTimestamp(String string) throws JsonParseException
+  public JsonUnserializer(Environment env)
   {
-    Matcher matcher = timestampPattern.matcher(string);
-    
-    if (matcher.matches())
-    {
-      int year = Integer.parseInt(matcher.group(1));
-      int month = Integer.parseInt(matcher.group(2));
-      int day = Integer.parseInt(matcher.group(3));
-      
-      return Timestamp.of(year, month, day);
-    }
-    else
-      throw new JsonParseException("Wrong timestamp format: "+string);
+    this.env = env;
   }
   
   @Override
   public Expense deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException
   {
-    if (!json.isJsonArray()) throw new JsonParseException("Expense root element must be an array");
-
-    JsonArray array = json.getAsJsonArray();
+    JsonArray jarray = json.getAsJsonArray();
     
-    Timestamp timestamp = parseTimestamp(array.get(0).getAsString());
+    Timestamp timestamp = context.deserialize(jarray.get(0), Timestamp.class);
+    ExpenseAmounts amounts = context.deserialize(jarray.get(1), ExpenseAmounts.class);
+    WeightedGroup group = context.deserialize(jarray.get(2), WeightedGroup.class);
+    Category category = context.deserialize(jarray.get(3), Category.class);
+    String title = context.deserialize(jarray.get(4), String.class);
     
-    return null;
+    return new Expense(amounts, timestamp, group, category, title);
   }
 
 }

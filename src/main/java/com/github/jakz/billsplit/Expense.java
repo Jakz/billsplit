@@ -1,6 +1,7 @@
 package com.github.jakz.billsplit;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -13,60 +14,51 @@ public class Expense implements Measurable
 {
   private final Category category;
   private final Optional<Timestamp> timestamp;
-  private final List<Pair<Person, Amount>> amounts;
-  private final Group sharers;
+  private final ExpenseAmounts amounts;
+  private final WeightedGroup sharers;
   
   private final String title;
-  private final String description;
   
-  public Expense(Amount amount, Person owner, Timestamp timestamp, Group sharers, Category category, String title, String description)
+  public Expense(ExpenseAmounts amounts, Timestamp timestamp, WeightedGroup sharers, Category category, String title)
   {
-    this.category = category;
-    this.timestamp = Optional.ofNullable(timestamp);
-    this.title = title;
-    this.description = description;
-    
-    this.amounts = new ArrayList<>();
-    this.amounts.add(new Pair<>(owner, amount));
-
+    this.amounts = amounts;
+    this.timestamp = Optional.of(timestamp);
     this.sharers = sharers;
+    this.category = category;
+    this.title = title;
   }
   
-  public static Expense of(Amount amount, Person owner, Group sharers, Category category, String title, String description)
+  public Expense(Amount amount, Person owner, Timestamp timestamp, Group sharers, Category category, String title)
   {
-    return new Expense(amount, owner, null, sharers, category, title, description);
+    this(
+      new ExpenseAmounts(Collections.singletonList(new Share<>(owner, amount))),
+      timestamp,
+      new WeightedGroup(sharers, sharers.size()),
+      category,
+      title
+    );
   }
   
-  public static Expense of(Amount amount, Person owner, Timestamp timestamp, Category category, String title, String description)
+  public static Expense of(Amount amount, Person owner, Group sharers, Category category, String title)
   {
-    return new Expense(amount, owner, timestamp, owner.group(), category, title, description);
+    return new Expense(amount, owner, null, sharers, category, title);
   }
   
   public static Expense of(Amount amount, Person owner, Timestamp timestamp, Category category, String title)
   {
-    return new Expense(amount, owner, timestamp, owner.group(), category, title, "");
+    return new Expense(amount, owner, timestamp, owner.group(), category, title);
   }
   
   public void add(Amount amount, Person owner)
   {
-    amounts.add(new Pair<>(owner, amount));
+    amounts.add(new Share<>(owner, amount));
   }
   
   public Category category() { return category; }
   public Optional<Timestamp> timestamp() { return timestamp; }
-  public Amount amount()
-  { 
-    return amount(amounts.get(0).second.currency());
-  }
   
-  public Amount amount(Currency currency)
-  {
-    return amounts.stream().reduce(
-        Amount.of(0.0f, currency),
-        (a, p) -> a.add(p.second.convert(currency)),
-        (a1, a2) -> a1.add(a2).convert(currency)
-    );
-  }
+  public Amount amount() { return amount(ExchangeRates.Provider.rates().baseCurrency()); }
+  public Amount amount(Currency currency) { return amounts.amount(currency); }
   
   @Override
   public float chartValue() { return amount(ExchangeRates.Provider.rates().baseCurrency()).chartValue(); }
@@ -78,8 +70,8 @@ public class Expense implements Measurable
   {    
     Map<Currency, Amount> amounts = this.amounts.stream().collect(
         Collectors.toMap(
-            p -> p.second.currency(), 
-            p -> p.second,
+            p -> p.value.currency(), 
+            p -> p.value,
             (i, j) -> i.add(j))
    );
     

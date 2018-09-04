@@ -1,6 +1,6 @@
 package com.github.jakz.billsplit;
 
-public class Person
+public class Person implements Comparable<Person>
 {
   private final String nickname;
   private Group group;
@@ -14,4 +14,10 @@ public class Person
   
   public void group(Group group) { this.group = group; }
   public Group group() { return group; }
+
+  @Override
+  public int compareTo(Person o) { return nickname.compareTo(o.nickname); }
+  
+  public int hashCode() { return nickname.hashCode(); }
+  public boolean equals(Object o) { return o instanceof Person && ((Person)o).nickname.equals(nickname); }
 }

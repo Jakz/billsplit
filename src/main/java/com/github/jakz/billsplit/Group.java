@@ -2,16 +2,18 @@ package com.github.jakz.billsplit;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Stream;
 
-public class Group
+public class Group implements Iterable<Person>
 {
   private final Set<Person> persons;
   
   public Group()
   {
-    persons = new HashSet<>();
+    persons = new TreeSet<>();
   }
   
   public Group(Set<Person> persons)
@@ -46,6 +48,11 @@ public class Group
   }
   
   public Stream<Person> stream() { return persons.stream(); }
+  public int size() { return persons.size(); }
+  
+  @Override
+  public Iterator<Person> iterator() { return persons.iterator(); }
+  
   
   
 }

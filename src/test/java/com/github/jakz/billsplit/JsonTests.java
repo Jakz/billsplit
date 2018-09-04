@@ -20,16 +20,7 @@ public class JsonTests
   public RepeatRule repeatRule = new RepeatRule();
   
   private TimestampAdapter timestampAdapter = new TimestampAdapter();
-  
-  private Timestamp randomTimestamp()
-  {
-    int year = ThreadLocalRandom.current().nextInt(1980, 2020);
-    int month = ThreadLocalRandom.current().nextInt(1, 13);
-    int day = ThreadLocalRandom.current().nextInt(1, 29);
-    
-    return Timestamp.of(year, month, day);
-  }
-  
+
   @Test
   public void testTimestampSimpleSerialization()
   {
@@ -52,7 +43,7 @@ public class JsonTests
   @Repeat(times = 100)
   public void testRandomTimestampsSerialization()
   {
-    Timestamp ts = randomTimestamp();
+    Timestamp ts = TestsSuite.randomTimestamp();
     JsonElement json = timestampAdapter.serialize(ts, null, null);
     String string = String.format("%04d-%02d-%02d", ts.year(), ts.month(), ts.day());
     assertEquals(json.getAsString(), string);
@@ -71,7 +62,7 @@ public class JsonTests
   @Repeat(times = 100)
   public void testRandomTimestampSerializeAndDeserialize()
   {
-    Timestamp ts1 = randomTimestamp();
+    Timestamp ts1 = TestsSuite.randomTimestamp();
     Timestamp ts2 = timestampAdapter.deserialize(timestampAdapter.serialize(ts1, null, null), null, null);
     assertEquals(ts1, ts2);
   }
