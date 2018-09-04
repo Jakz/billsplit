@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.github.jakz.billsplit.Amount;
 import com.github.jakz.billsplit.Environment;
 import com.github.jakz.billsplit.ExpenseAmounts;
-import com.github.jakz.billsplit.Person;
 import com.github.jakz.billsplit.Share;
+import com.github.jakz.billsplit.data.Amount;
+import com.github.jakz.billsplit.data.Person;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;

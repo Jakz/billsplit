@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.jakz.billsplit.Environment;
-import com.github.jakz.billsplit.Person;
 import com.github.jakz.billsplit.WeightedGroup;
+import com.github.jakz.billsplit.data.Person;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;

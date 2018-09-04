@@ -1,4 +1,4 @@
-package com.github.jakz.billsplit;
+package com.github.jakz.billsplit.data;
 
 public class Person implements Comparable<Person>
 {

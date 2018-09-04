@@ -7,6 +7,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.github.jakz.billsplit.ExchangeRates.RateMap;
+import com.github.jakz.billsplit.data.Amount;
+import com.github.jakz.billsplit.data.Currency;
 
 public class ExchangeRatesTests
 {

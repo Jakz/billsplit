@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.github.jakz.billsplit.data.Amount;
+import com.github.jakz.billsplit.data.Currency;
+import com.github.jakz.billsplit.data.Person;
+
 public class ExpenseAmounts
 {
   private final List<Share<Amount>> amounts;

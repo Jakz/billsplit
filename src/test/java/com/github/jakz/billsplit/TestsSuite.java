@@ -8,6 +8,10 @@ import java.util.stream.Collectors;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
+import com.github.jakz.billsplit.data.Group;
+import com.github.jakz.billsplit.data.Person;
+import com.github.jakz.billsplit.data.Timestamp;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

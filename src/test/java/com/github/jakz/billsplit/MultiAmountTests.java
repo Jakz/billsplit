@@ -7,6 +7,9 @@ import java.util.Collections;
 
 import org.junit.Test;
 
+import com.github.jakz.billsplit.data.Amount;
+import com.github.jakz.billsplit.data.MultiAmount;
+
 public class MultiAmountTests
 {
   @Test

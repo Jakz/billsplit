@@ -2,6 +2,8 @@ package com.github.jakz.billsplit;
 
 import java.util.Objects;
 
+import com.github.jakz.billsplit.data.Person;
+
 public class Share<T>
 {
   public final Person person;

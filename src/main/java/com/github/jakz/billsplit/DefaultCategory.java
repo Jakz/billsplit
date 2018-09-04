@@ -1,5 +1,7 @@
 package com.github.jakz.billsplit;
 
+import com.github.jakz.billsplit.data.Category;
+
 public enum DefaultCategory implements Category
 {
   FOOD("Food"),

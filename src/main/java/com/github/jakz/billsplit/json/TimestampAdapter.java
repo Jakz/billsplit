@@ -4,7 +4,7 @@ import java.lang.reflect.Type;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.github.jakz.billsplit.Timestamp;
+import com.github.jakz.billsplit.data.Timestamp;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;

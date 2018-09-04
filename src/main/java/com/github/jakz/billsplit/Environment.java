@@ -1,5 +1,8 @@
 package com.github.jakz.billsplit;
 
+import com.github.jakz.billsplit.data.Group;
+import com.github.jakz.billsplit.data.Person;
+
 public class Environment
 {
   public final Group group;

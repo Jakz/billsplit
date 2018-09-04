@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 
+import com.github.jakz.billsplit.data.Person;
 import com.pixbits.lib.lang.Pair;
 
 public class WeightedGroup

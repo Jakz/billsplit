@@ -5,6 +5,9 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import com.github.jakz.billsplit.data.Amount;
+import com.github.jakz.billsplit.data.Currency;
+
 public class AmountTests
 {
   @Test

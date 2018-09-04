@@ -7,6 +7,8 @@ import java.util.Map;
 import javax.money.MonetaryOperator;
 import javax.money.convert.MonetaryConversions;
 
+import com.github.jakz.billsplit.data.Amount;
+import com.github.jakz.billsplit.data.Currency;
 import com.pixbits.lib.lang.Pair;
 
 public interface ExchangeRates

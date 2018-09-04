@@ -4,8 +4,8 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Optional;
 
-import com.github.jakz.billsplit.Category;
 import com.github.jakz.billsplit.DefaultCategory;
+import com.github.jakz.billsplit.data.Category;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;

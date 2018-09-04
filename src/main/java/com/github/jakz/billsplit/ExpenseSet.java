@@ -5,6 +5,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.github.jakz.billsplit.data.Amount;
+import com.github.jakz.billsplit.data.Currency;
+import com.github.jakz.billsplit.data.MultiAmount;
+
 public class ExpenseSet implements Iterable<Expense>
 {
   private final List<Expense> expenses;

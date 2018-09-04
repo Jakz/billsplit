@@ -1,4 +1,4 @@
-package com.github.jakz.billsplit;
+package com.github.jakz.billsplit.data;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -21,6 +21,8 @@ import javax.money.format.MonetaryFormats;
 import org.javamoney.moneta.ExchangeRateType;
 import org.javamoney.moneta.Money;
 
+import com.github.jakz.billsplit.ExchangeRates;
+import com.github.jakz.billsplit.ExchangeRates.Provider;
 import com.pixbits.lib.ui.charts.Measurable;
 
 public class Amount implements Measurable

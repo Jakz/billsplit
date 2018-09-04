@@ -5,6 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.github.jakz.billsplit.data.Amount;
+import com.github.jakz.billsplit.data.Currency;
+import com.github.jakz.billsplit.data.Group;
+import com.github.jakz.billsplit.data.MultiAmount;
+import com.github.jakz.billsplit.data.Person;
+import com.github.jakz.billsplit.data.Timestamp;
 import com.pixbits.lib.ui.UIUtils;
 import com.pixbits.lib.ui.WrapperFrame;
 import com.pixbits.lib.ui.charts.BarChartPanel;
