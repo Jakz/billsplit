@@ -24,7 +24,10 @@ public class ExpenseAmountsAdapter implements JsonAdapter<ExpenseAmounts>
   Share<Amount> deserializeShare(JsonArray array)
   {
     Amount amount = Amount.of(array.get(0).getAsString());
-    Person person = env.group.forName(array.get(1).getAsString());
+    Person person = env.person(array.get(1).getAsString());
+    
+    if (person == null)
+      throw new JsonParseException("Unknown person: "+array.get(1).getAsString());
     
     return new Share<>(person, amount);
   }
@@ -50,11 +53,10 @@ public class ExpenseAmountsAdapter implements JsonAdapter<ExpenseAmounts>
     /* multiple amounts */
     if (jamounts.get(0).isJsonArray())
     {
-      JsonArray innerAmounts = jamounts.get(0).getAsJsonArray();
       shares = new ArrayList<>();
       
-      for (int i = 0; i < innerAmounts.size(); ++i)
-        shares.add(deserializeShare(innerAmounts.get(i).getAsJsonArray()));
+      for (int i = 0; i < jamounts.size(); ++i)
+        shares.add(deserializeShare(jamounts.get(i).getAsJsonArray()));
     }
     else
       shares = Collections.singletonList(deserializeShare(jamounts));

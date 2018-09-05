@@ -22,4 +22,6 @@ public class Timestamp
   
   public int hashCode() { return date.hashCode(); }
   public boolean equals(Object object) { return object instanceof Timestamp && ((Timestamp)object).date.equals(date); }
+  
+  public String toString() { return String.format("%04d-%02d-%02d", year(), month(), day()); }
 }

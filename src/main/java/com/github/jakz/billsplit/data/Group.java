@@ -1,6 +1,7 @@
 package com.github.jakz.billsplit.data;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -16,9 +17,9 @@ public class Group implements Iterable<Person>
     persons = new TreeSet<>();
   }
   
-  public Group(Set<Person> persons)
+  public Group(Collection<Person> persons)
   {
-    this.persons = persons;
+    this.persons = new TreeSet<>(persons);
   }
   
   public Group(Person... persons)

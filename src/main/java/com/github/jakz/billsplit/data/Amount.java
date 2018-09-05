@@ -25,7 +25,7 @@ import com.github.jakz.billsplit.ExchangeRates;
 import com.github.jakz.billsplit.ExchangeRates.Provider;
 import com.pixbits.lib.ui.charts.Measurable;
 
-public class Amount implements Measurable
+public class Amount implements Measurable, Comparable<Amount>
 {
   private final static MonetaryRounding rounding = Monetary.getDefaultRounding();
   
@@ -135,4 +135,7 @@ public class Amount implements Measurable
     
     return new Amount(this.amount.add(amount.amount), currency);
   }
+
+  @Override
+  public int compareTo(Amount o) { return amount.compareTo(o.amount); }
 }

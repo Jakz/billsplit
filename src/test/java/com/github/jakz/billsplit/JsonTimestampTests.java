@@ -3,8 +3,6 @@ package com.github.jakz.billsplit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -15,7 +13,7 @@ import com.github.jakz.billsplit.support.RepeatRule;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 
-public class JsonTests
+public class JsonTimestampTests
 {
   @Rule
   public RepeatRule repeatRule = new RepeatRule();
@@ -57,7 +55,6 @@ public class JsonTests
     Timestamp ts = timestampAdapter.deserialize(new JsonPrimitive(string), null, null);
     assertEquals(ts, Timestamp.of(1234, 12, 23));
   }
-  
   
   @Test
   @Repeat(times = 100)

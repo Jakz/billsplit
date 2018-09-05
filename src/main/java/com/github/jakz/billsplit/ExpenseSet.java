@@ -8,14 +8,20 @@ import java.util.stream.Stream;
 import com.github.jakz.billsplit.data.Amount;
 import com.github.jakz.billsplit.data.Currency;
 import com.github.jakz.billsplit.data.MultiAmount;
+import com.pixbits.lib.ui.table.DataSource;
 
-public class ExpenseSet implements Iterable<Expense>
+public class ExpenseSet implements Iterable<Expense>, DataSource<Expense>
 {
   private final List<Expense> expenses;
   
   public ExpenseSet()
   {
     this.expenses = new ArrayList<>();
+  }
+  
+  public ExpenseSet(List<Expense> expenses)
+  {
+    this.expenses = expenses;
   }
   
   void add(Expense expense) { this.expenses.add(expense); }
@@ -32,4 +38,8 @@ public class ExpenseSet implements Iterable<Expense>
   @Override
   public Iterator<Expense> iterator() { return expenses.iterator(); }
   public Stream<MultiAmount> amounts() { return expenses.stream().map(Expense::multiAmount); }
+
+  @Override public Expense get(int index) { return expenses.get(index); }
+  @Override public int size() { return expenses.size(); }
+  @Override public int indexOf(Expense object) { return expenses.indexOf(object); }
 }

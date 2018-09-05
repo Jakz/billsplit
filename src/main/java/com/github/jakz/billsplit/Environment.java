@@ -5,12 +5,15 @@ import com.github.jakz.billsplit.data.Person;
 
 public class Environment
 {
-  public final Group group;
+  private Group group;
   
   public Environment(Group group)
   {
     this.group = group;
   }
+  
+  public void setGroup(Group group) { this.group = group; }
+  public Group group() { return group; }
   
   public Person person(String nickname)
   {

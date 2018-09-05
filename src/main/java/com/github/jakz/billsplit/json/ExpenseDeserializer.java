@@ -27,11 +27,11 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
-public class JsonUnserializer implements JsonDeserializer<Expense>
+public class ExpenseDeserializer implements JsonDeserializer<Expense>
 {
   private final Environment env;
   
-  public JsonUnserializer(Environment env)
+  public ExpenseDeserializer(Environment env)
   {
     this.env = env;
   }

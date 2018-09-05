@@ -1,16 +1,31 @@
 package com.github.jakz.billsplit;
 
 import java.awt.Dimension;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.github.jakz.billsplit.data.Amount;
+import com.github.jakz.billsplit.data.Category;
 import com.github.jakz.billsplit.data.Currency;
 import com.github.jakz.billsplit.data.Group;
 import com.github.jakz.billsplit.data.MultiAmount;
 import com.github.jakz.billsplit.data.Person;
 import com.github.jakz.billsplit.data.Timestamp;
+import com.github.jakz.billsplit.json.CategoryAdapter;
+import com.github.jakz.billsplit.json.ExpenseAmountsAdapter;
+import com.github.jakz.billsplit.json.ExpenseDeserializer;
+import com.github.jakz.billsplit.json.ExpenseSetDeserializer;
+import com.github.jakz.billsplit.json.TimestampAdapter;
+import com.github.jakz.billsplit.json.WeightedGroupAdapter;
+import com.github.jakz.billsplit.ui.ExpenseTablePanel;
+import com.github.jakz.billsplit.ui.Mediator;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.pixbits.lib.ui.UIUtils;
 import com.pixbits.lib.ui.WrapperFrame;
 import com.pixbits.lib.ui.charts.BarChartPanel;
@@ -20,30 +35,74 @@ import com.pixbits.lib.ui.charts.events.PieChartMouseListener;
 
 public class App 
 {
-  static class Sample implements Measurable
+  static MyMediator mediator = new MyMediator();
+  static WrapperFrame<ExpenseTablePanel> expensesFrame;
+  
+  
+  static Environment environment;
+  
+  static class MyMediator implements Mediator
   {
-    final float v;
-    public Sample(float v) { this.v = v; }
-    @Override public float chartValue() { return v; }
+    ExpenseSet expenses;
+    
+    @Override public ExpenseSet expenses() { return expenses; }
+
+    @Override
+    public void onExpensesLoaded(ExpenseSet expenses)
+    {
+      this.expenses = expenses;
+      expensesFrame.panel().setData(expenses);
+    }
   }
   
+  public static ExpenseSet loadData()
+  {
+    environment = new Environment(null);
+    
+    GsonBuilder builder = new GsonBuilder();
+    builder.registerTypeAdapter(Timestamp.class, new TimestampAdapter());
+    builder.registerTypeAdapter(Category.class, new CategoryAdapter());
+    builder.registerTypeAdapter(ExpenseAmounts.class, new ExpenseAmountsAdapter(environment));
+    builder.registerTypeAdapter(WeightedGroup.class, new WeightedGroupAdapter(environment));
+    builder.registerTypeAdapter(ExpenseSet.class, new ExpenseSetDeserializer(environment));
+    builder.registerTypeAdapter(Expense.class, new ExpenseDeserializer(environment));
+
+    builder.setPrettyPrinting();
+    
+    Gson gson = builder.create();
+    
+    try (BufferedReader rdr = Files.newBufferedReader(Paths.get("expenses.json")))
+    {
+      return gson.fromJson(rdr, ExpenseSet.class);
+    } 
+    catch (IOException e)
+    {
+      e.printStackTrace();
+      return null;
+    }  
+  }
+  
+  public static void buildUI()
+  {
+    UIUtils.setNimbusLNF();
+    
+    expensesFrame = UIUtils.buildFrame(new ExpenseTablePanel(mediator), "Expenses");
+    expensesFrame.exitOnClose();
+  }
+
   public static void main( String[] args )
   {
-    Person jack = new Person("Jack");
-    Person vicky = new Person("Vicky");
+    buildUI();
+    expensesFrame.centerOnScreen();
+    expensesFrame.setVisible(true);
+
     
-    Group group = new Group(jack, vicky);
-    group.stream().forEach(p -> p.group(group));
+    ExpenseSet expenses = loadData();
+    System.out.printf("Loaded %d expenses\n", expenses.size());
+    mediator.onExpensesLoaded(expenses);
     
-    Expense expense = Expense.of(Amount.of("78.18 USD"), jack, Timestamp.of(2019, 8, 9), DefaultCategory.AIRPLANE, "Volo Santiago -- Calama");
-    expense.add(Amount.of("116.22 EUR"), vicky);
-    
-    ExpenseSet expenses = new ExpenseSet();
-    expenses.add(expense);
-    expenses.add(Expense.of(Amount.of("127.50 USD"), vicky, Timestamp.of(2019, 8, 9), DefaultCategory.AIRPLANE, "Volo Iquique -- Santiago"));
-    expenses.add(Expense.of(Amount.of("30 EUR"), vicky, Timestamp.of(2019, 8, 13), DefaultCategory.TAXI, "Taxi Casa -- Aeroporto"));
-    expenses.add(Expense.of(Amount.of("10 EUR"), jack, Timestamp.of(2019, 8, 13), DefaultCategory.HEALTH, "Condoms"));
-    expenses.add(Expense.of(Amount.of("13.70 EUR"), vicky, Timestamp.of(2019, 8, 13), DefaultCategory.DINNER, "Cena Fiumicino"));
+    if (true)
+      return;
 
     PieChartPanel<MultiAmount> panel = new PieChartPanel<>(new Dimension(600,600));
     panel.addListener(new PieChartMouseListener() {

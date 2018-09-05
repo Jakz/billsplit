@@ -8,9 +8,16 @@ import java.util.stream.Collectors;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
+import com.github.jakz.billsplit.data.Category;
 import com.github.jakz.billsplit.data.Group;
 import com.github.jakz.billsplit.data.Person;
 import com.github.jakz.billsplit.data.Timestamp;
+import com.github.jakz.billsplit.json.CategoryAdapter;
+import com.github.jakz.billsplit.json.ExpenseAmountsAdapter;
+import com.github.jakz.billsplit.json.TimestampAdapter;
+import com.github.jakz.billsplit.json.WeightedGroupAdapter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -22,7 +29,9 @@ import junit.framework.TestSuite;
   MultiAmountTests.class,
   WeightedGroupTests.class,
   ExchangeRatesTests.class,
-  JsonTests.class
+  
+  JsonTimestampTests.class,
+  JsonExpenseAmountsTests.class
 })
 public class TestsSuite
 {
@@ -42,5 +51,19 @@ public class TestsSuite
     int day = ThreadLocalRandom.current().nextInt(1, 29);
     
     return Timestamp.of(year, month, day);
+  }
+  
+  public static Gson json(Group group)
+  {
+    Environment env = new Environment(group);
+    
+    GsonBuilder builder = new GsonBuilder();
+    builder.registerTypeAdapter(Timestamp.class, new TimestampAdapter());
+    builder.registerTypeAdapter(Category.class, new CategoryAdapter());
+    builder.registerTypeAdapter(ExpenseAmounts.class, new ExpenseAmountsAdapter(env));
+    builder.registerTypeAdapter(WeightedGroup.class, new WeightedGroupAdapter(env));
+    builder.setPrettyPrinting();
+    
+    return builder.create();
   }
 }

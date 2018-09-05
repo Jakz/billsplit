@@ -19,13 +19,16 @@ public class ExpenseAmounts
   
   void add(Share<Amount> amount)
   {
-    this.add(amount);
+    amounts.add(amount);
   }
   
   void add(Person person, Amount amount)
   {
     this.add(new Share<>(person, amount));
   }
+  
+  public int size() { return amounts.size(); }
+  public Share<Amount> get(int i) { return amounts.get(i); }
 
   public Amount amount(Currency currency)
   {
@@ -35,6 +38,6 @@ public class ExpenseAmounts
         (a1, a2) -> a1.add(a2).convert(currency)
     );
   }
-  
+
   public Stream<Share<Amount>> stream() { return amounts.stream(); }
 }

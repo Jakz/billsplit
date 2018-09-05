@@ -20,7 +20,7 @@ import com.pixbits.lib.ui.charts.Measurable;
 public class Expense implements Measurable
 {
   private final Category category;
-  private final Optional<Timestamp> timestamp;
+  private final Timestamp timestamp;
   private final ExpenseAmounts amounts;
   private final WeightedGroup sharers;
   
@@ -29,7 +29,7 @@ public class Expense implements Measurable
   public Expense(ExpenseAmounts amounts, Timestamp timestamp, WeightedGroup sharers, Category category, String title)
   {
     this.amounts = amounts;
-    this.timestamp = Optional.of(timestamp);
+    this.timestamp = timestamp;
     this.sharers = sharers;
     this.category = category;
     this.title = title;
@@ -62,8 +62,9 @@ public class Expense implements Measurable
   }
   
   public Category category() { return category; }
-  public Optional<Timestamp> timestamp() { return timestamp; }
+  public Timestamp timestamp() { return timestamp; }
   
+  public ExpenseAmounts amounts() { return amounts; }
   public Amount amount() { return amount(ExchangeRates.Provider.rates().baseCurrency()); }
   public Amount amount(Currency currency) { return amounts.amount(currency); }
   

@@ -41,7 +41,7 @@ public class WeightedGroupAdapter implements JsonAdapter<WeightedGroup>
       
       /* "split-equally" */
       if (json.getAsString().equals(ALL_SPLIT_EQUALLY))
-        return new WeightedGroup(env.group, env.group.size());
+        return new WeightedGroup(env.group(), env.group().size());
       
       Person specific = env.person(string);
       
