@@ -8,15 +8,18 @@ import javax.money.Monetary;
 
 public enum Currency
 {
-  USD("USD"),
-  EUR("EUR")
+  USD("USD", "United Stated Dollar"),
+  EUR("EUR", "Euro"),
+  CLP("CLP", "Chilean Peso"),
   ;
   
   public final CurrencyUnit ref;
+  public final String name;
   
-  private Currency(String code)
+  private Currency(String code, String name)
   {
     ref = Monetary.getCurrency(code);
+    this.name = name;
   }
   
   public int number() { return ref.getNumericCode(); }

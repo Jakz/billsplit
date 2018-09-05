@@ -61,6 +61,7 @@ public class Expense implements Measurable
     amounts.add(new Share<>(owner, amount));
   }
   
+  public String title() { return title; }
   public Category category() { return category; }
   public Timestamp timestamp() { return timestamp; }
   

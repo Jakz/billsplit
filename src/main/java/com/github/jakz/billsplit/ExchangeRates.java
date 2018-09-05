@@ -34,6 +34,7 @@ public interface ExchangeRates
       instance = map;
       
       map.register(Currency.EUR, Currency.USD, 1.1632f);
+      map.register(Currency.EUR, Currency.CLP, 750.0f);
     }
     
     public static ExchangeRates rates() { return instance; }

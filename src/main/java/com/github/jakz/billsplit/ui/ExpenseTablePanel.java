@@ -1,6 +1,7 @@
 package com.github.jakz.billsplit.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -38,7 +39,10 @@ public class ExpenseTablePanel extends JPanel
     ordinalColumn.setWidth(60);
     model.addColumn(ordinalColumn);
     
-    model.addColumn(new ColumnSpec<>("Date", Timestamp.class, e -> e.timestamp()));
+    ColumnSpec<Expense, ?> dateColumn = new ColumnSpec<>("Date", Timestamp.class, e -> e.timestamp());
+    dateColumn.setWidth(100);
+    model.addColumn(dateColumn);
+    
     model.addColumn(new ColumnSpec<>("Amount", Amount.class, e -> e.amount()));
     
     
@@ -48,17 +52,30 @@ public class ExpenseTablePanel extends JPanel
       @Override
       public void decorate(JLabel label, JComponent source, ExpenseAmounts value, int index, boolean isSelected, boolean hasFocus)
       {
-        String text = value.stream().map(s -> String.format("(%s, %s)", s.person.nickname(), s.value.toString())).collect(Collectors.joining(", ", "[ ", " ]"));
-        label.setText(text);
+        if (value.isMultiple())
+        {
+          String text = value.stream().map(s -> String.format("%s: %s", s.person.nickname(), s.value.toString())).collect(Collectors.joining(", "/*, "[ ", " ]"*/));
+          label.setText(text);
+        }
+        else
+        {
+          label.setText(String.format("%s: %s", value.get(0).person.nickname(), value.get(0).value.toString()));
+        }
       }
     };
     amountsColumn.setRenderer(amountsRenderer);
     model.addColumn(amountsColumn);
     
+    model.addColumn(new ColumnSpec<>("Type", String.class, e -> e.category().toString()));
+    model.addColumn(new ColumnSpec<>("Desc", String.class, e -> e.title()));
+
+    
     model.fireTableStructureChanged();
     
     setLayout(new BorderLayout());
-    add(new JScrollPane(table), BorderLayout.CENTER);
+    JScrollPane scrollPane = new JScrollPane(table);
+    scrollPane.setPreferredSize(new Dimension(1200, 800));
+    add(scrollPane, BorderLayout.CENTER);
   }
   
   public void setData(ExpenseSet expenses)

@@ -19,6 +19,7 @@ public enum DefaultCategory implements Category
   TAXI("Taxi", TRANSPORTATION),
   BUS("Bus", TRANSPORTATION),
   TRAIN("Train", TRANSPORTATION),
+  METRO("Metro", TRAIN),
   AIRPLANE("Plane", TRANSPORTATION),
   CAR_RENT("Car Rent", TRANSPORTATION),
   
@@ -30,7 +31,9 @@ public enum DefaultCategory implements Category
   
   GASOLINE("Gasoline", CAR_RENT),
   
-  HEALTH("Health")
+  HEALTH("Health"),
+  
+  COMMISSION("Commission")
   
   ;
   

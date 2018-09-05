@@ -98,7 +98,7 @@ public class App
 
     
     ExpenseSet expenses = loadData();
-    System.out.printf("Loaded %d expenses\n", expenses.size());
+    System.out.printf("Loaded %d expenses for %s\n", expenses.size(), expenses.amounts().map(e -> e.total(Currency.EUR)).reduce(Amount.zero(), (a1,a2) -> a1.add(a2)).toString());
     mediator.onExpensesLoaded(expenses);
     
     if (true)

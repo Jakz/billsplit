@@ -16,7 +16,7 @@ import com.pixbits.lib.json.JsonAdapter;
 
 public class WeightedGroupAdapter implements JsonAdapter<WeightedGroup>
 {
-  private static final String ALL_SPLIT_EQUALLY = "split-equally";
+  private static final String ALL_SPLIT_EQUALLY1 = "split-equally", ALL_SPLIT_EQUALLY2 = "se";
   
   private final Environment env;
   
@@ -40,7 +40,7 @@ public class WeightedGroupAdapter implements JsonAdapter<WeightedGroup>
       String string = json.getAsString();
       
       /* "split-equally" */
-      if (json.getAsString().equals(ALL_SPLIT_EQUALLY))
+      if (json.getAsString().equals(ALL_SPLIT_EQUALLY1) || json.getAsString().equals(ALL_SPLIT_EQUALLY2))
         return new WeightedGroup(env.group(), env.group().size());
       
       Person specific = env.person(string);
@@ -56,7 +56,7 @@ public class WeightedGroupAdapter implements JsonAdapter<WeightedGroup>
       String splitType = array.get(0).getAsString();
       
       /* [ "split-equally", "Foo", "Bar" ] */
-      if (splitType.equals(ALL_SPLIT_EQUALLY))
+      if (splitType.equals(ALL_SPLIT_EQUALLY1) || splitType.equals(ALL_SPLIT_EQUALLY2))
       {
         List<Person> persons = new ArrayList<>();
         

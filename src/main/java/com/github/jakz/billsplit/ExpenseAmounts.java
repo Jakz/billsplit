@@ -27,6 +27,7 @@ public class ExpenseAmounts
     this.add(new Share<>(person, amount));
   }
   
+  public boolean isMultiple() { return amounts.size() > 1; }
   public int size() { return amounts.size(); }
   public Share<Amount> get(int i) { return amounts.get(i); }
 

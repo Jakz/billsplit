@@ -31,6 +31,7 @@ public class MultiAmount implements Iterable<Amount>, Measurable
     );
   }
   
+  public Amount total(Currency currency) { return collapse(currency); }
   public Amount collapse() { return amounts.isEmpty() ? Amount.zero() : collapse(amounts.get(0).currency()); }
   
   public Stream<Amount> stream() { return amounts.stream(); }
