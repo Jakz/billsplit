@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -25,9 +28,13 @@ import com.github.jakz.billsplit.json.TimestampAdapter;
 import com.github.jakz.billsplit.json.WeightedGroupAdapter;
 import com.github.jakz.billsplit.ui.ExpenseTablePanel;
 import com.github.jakz.billsplit.ui.Mediator;
+import com.github.jakz.billsplit.ui.SummaryBarBehavior;
+import com.github.jakz.billsplit.ui.SummaryEntry;
+import com.github.jakz.billsplit.ui.SummaryTablePanel;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.pixbits.lib.lang.Pair;
+import com.pixbits.lib.lang.StringUtils;
 import com.pixbits.lib.ui.UIUtils;
 import com.pixbits.lib.ui.WrapperFrame;
 import com.pixbits.lib.ui.charts.BarChartPanel;
@@ -35,6 +42,7 @@ import com.pixbits.lib.ui.charts.ChartPanel;
 import com.pixbits.lib.ui.charts.Measurable;
 import com.pixbits.lib.ui.charts.PieChartPanel;
 import com.pixbits.lib.ui.charts.events.PieChartMouseListener;
+import com.pixbits.lib.ui.table.DataSource;
 
 public class App 
 {
@@ -104,7 +112,17 @@ public class App
     System.out.printf("Loaded %d expenses for %s\n", expenses.size(), expenses.amounts().map(e -> e.total(Currency.EUR)).reduce(Amount.zero(), (a1,a2) -> a1.add(a2)).toString());
     mediator.onExpensesLoaded(expenses);
     
-    ChartPanel<Measurable<Amount>> panel = new BarChartPanel<Measurable<Amount>>(new Dimension(600,600));
+    WrapperFrame<SummaryTablePanel<SummaryEntry>> summaryFrame = UIUtils.buildFrame(new SummaryTablePanel<>(null), "Summary");
+    List<SummaryEntry> summaryEntries = Summarizers.owedByPerson(expenses);
+    
+    summaryFrame.centerOnScreen();
+    summaryFrame.setVisible(true);
+    
+    summaryFrame.panel().setBehavior(SummaryBarBehavior.ofAveraging(summaryEntries, t -> t.amount.convert(Currency.EUR).unprecise(), (t,f) -> StringUtils.toPercent(f, 2)+"%"));
+    summaryFrame.panel().setData(DataSource.of(summaryEntries));
+
+    
+    /*ChartPanel<Measurable<Amount>> panel = new BarChartPanel<Measurable<Amount>>(new Dimension(600,600));
     
     List<Pair<Timestamp, List<Expense>>> byDay = expenses.byDay();
     
@@ -121,7 +139,7 @@ public class App
     
     WrapperFrame<?> frame = UIUtils.buildFrame(panel, "Expenses By Day");
     frame.exitOnClose();
-    frame.setVisible(true);
+    frame.setVisible(true);*/
 
     if (true)
       return;

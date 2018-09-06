@@ -54,12 +54,12 @@ public class WeightedGroup
   }
   
   public Share<Float> get(int index) { return people.get(index); }
-  public Share<Float> get(String name) { return people.stream().filter(s -> s.person.nickname().equals(name)).findFirst().get(); } 
+  public Share<Float> get(String name) { return people.stream().filter(s -> s.person.nickname().equals(name)).findFirst().orElse(new Share<>(null, 0.0f)); } 
   
   public int size() { return people.size(); }
   
   public float weight(String person) { return people.stream().filter(s -> s.person.nickname().equals(person)).findFirst().get().value; }
-  public float weight(Person person) { return people.stream().filter(s -> s.person == person).findFirst().get().value; }
+  public float weight(Person person) { return people.stream().filter(s -> s.person == person).findFirst().map(s -> s.value).orElse(0.0f); }
   
   public Stream<Share<Float>> stream()
   {

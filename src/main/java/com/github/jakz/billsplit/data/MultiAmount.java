@@ -2,8 +2,12 @@ package com.github.jakz.billsplit.data;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.pixbits.lib.ui.charts.Measurable;
@@ -29,6 +33,32 @@ public class MultiAmount implements Iterable<Amount>, Measurable
         (a, p) -> a.add(p.convert(currency)),
         (a1, a2) -> a1.add(a2).convert(currency)
     );
+  }
+  
+  public MultiAmount multiply(float v)
+  {
+    List<Amount> scaled = amounts.stream().map(a -> a.multiply(v)).collect(Collectors.toList());
+    return new MultiAmount(scaled);
+  }
+  
+  public MultiAmount add(MultiAmount other, boolean keepSimplified)
+  {
+    if (!keepSimplified)
+    {
+      MultiAmount result = new MultiAmount();
+      result.amounts.addAll(amounts);
+      result.amounts.addAll(other.amounts);
+      return result;
+    }
+    else
+    {
+      Map<Currency, Amount> samounts = new HashMap<>();
+            
+      this.amounts.stream().forEach(a -> samounts.merge(a.currency(), a, (o, v) -> o.add(v)));
+      other.amounts.stream().forEach(a -> samounts.merge(a.currency(), a, (o, v) -> o.add(v)));
+      
+      return new MultiAmount(samounts.values());
+    }
   }
   
   public Amount total(Currency currency) { return collapse(currency); }

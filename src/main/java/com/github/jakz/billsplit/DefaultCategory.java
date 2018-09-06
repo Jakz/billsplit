@@ -7,7 +7,7 @@ public enum DefaultCategory implements Category
   FOOD("Food"),
   TRANSPORTATION("Transport"),
   ATTRACTION("Attraction"),
-  SOUVENIR("Souvenir"),
+  GIFT("Gift"),
   MISC("Misc"),
 
   BREAKFAST("Breakfast", FOOD),
@@ -49,7 +49,7 @@ public enum DefaultCategory implements Category
   
   MUSEUM("Museum", TICKET),
   
-  MAGNET("Magnet", SOUVENIR)
+  MAGNET("Magnet", GIFT)
   ;
   
   private final DefaultCategory parent;
@@ -67,8 +67,13 @@ public enum DefaultCategory implements Category
     this.parent = parent;
     this.root = parent;
     
-    while (root != null && root.parent != null)
-      root = root.parent;
+    if (root != null)
+    {
+      while (root.parent != null)
+        root = root.parent;
+    }
+    else
+      root = this;
   }
   
   @Override public String caption() { return caption; }
