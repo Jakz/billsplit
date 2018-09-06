@@ -10,7 +10,9 @@ public enum Currency
 {
   USD("USD", "United Stated Dollar"),
   EUR("EUR", "Euro"),
+  
   CLP("CLP", "Chilean Peso"),
+  PEN("PEN", "Peruvian Sol"),
   ;
   
   public final CurrencyUnit ref;

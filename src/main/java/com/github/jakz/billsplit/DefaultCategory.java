@@ -7,14 +7,21 @@ public enum DefaultCategory implements Category
   FOOD("Food"),
   TRANSPORTATION("Transport"),
   ATTRACTION("Attraction"),
+  SOUVENIR("Souvenir"),
+  MISC("Misc"),
 
   BREAKFAST("Breakfast", FOOD),
   LUNCH("Lunch", FOOD),
   DINNER("Dinner", FOOD),
   
-  BEVERAGES("Beverages", FOOD),
+  SNACKS("Snacks", FOOD),
   
+  FRUITS("Fruits", SNACKS),
+  WATER("Water", SNACKS),
+  
+  BEVERAGES("Beverages", FOOD),
   ALCHOOL("Drinks", BEVERAGES),
+  COFFEE("Coffee", BEVERAGES),
   
   TAXI("Taxi", TRANSPORTATION),
   BUS("Bus", TRANSPORTATION),
@@ -22,8 +29,7 @@ public enum DefaultCategory implements Category
   METRO("Metro", TRAIN),
   AIRPLANE("Plane", TRANSPORTATION),
   CAR_RENT("Car Rent", TRANSPORTATION),
-  
-  MUSEUM("Museum", ATTRACTION),
+  BIKE("Bike", TRANSPORTATION),
   
   ACCOMODATION("Accomodation"),
   HOTEL("Hotel", ACCOMODATION),
@@ -31,13 +37,23 @@ public enum DefaultCategory implements Category
   
   GASOLINE("Gasoline", CAR_RENT),
   
-  HEALTH("Health"),
+  HEALTH("Health", MISC),
   
-  COMMISSION("Commission")
+  TOILET("Toilet", HEALTH),
   
+  EXCHANGE("Exchange", MISC),
+  COMMISSION("Commission", MISC),
+  
+  TICKET("Ticket", ATTRACTION),
+  TOUR("Tour", ATTRACTION),
+  
+  MUSEUM("Museum", TICKET),
+  
+  MAGNET("Magnet", SOUVENIR)
   ;
   
   private final DefaultCategory parent;
+  private DefaultCategory root;
   private final String caption;
   
   private DefaultCategory(String caption)
@@ -49,8 +65,13 @@ public enum DefaultCategory implements Category
   {
     this.caption = caption;
     this.parent = parent;
+    this.root = parent;
+    
+    while (root != null && root.parent != null)
+      root = root.parent;
   }
-
+  
   @Override public String caption() { return caption; }
   @Override public Category parent() { return parent; }
+  @Override public Category root() { return root; }
 }

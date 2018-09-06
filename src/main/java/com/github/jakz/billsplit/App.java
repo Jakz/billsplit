@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 import com.github.jakz.billsplit.data.Amount;
 import com.github.jakz.billsplit.data.Category;
@@ -26,9 +27,11 @@ import com.github.jakz.billsplit.ui.ExpenseTablePanel;
 import com.github.jakz.billsplit.ui.Mediator;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.pixbits.lib.lang.Pair;
 import com.pixbits.lib.ui.UIUtils;
 import com.pixbits.lib.ui.WrapperFrame;
 import com.pixbits.lib.ui.charts.BarChartPanel;
+import com.pixbits.lib.ui.charts.ChartPanel;
 import com.pixbits.lib.ui.charts.Measurable;
 import com.pixbits.lib.ui.charts.PieChartPanel;
 import com.pixbits.lib.ui.charts.events.PieChartMouseListener;
@@ -101,10 +104,29 @@ public class App
     System.out.printf("Loaded %d expenses for %s\n", expenses.size(), expenses.amounts().map(e -> e.total(Currency.EUR)).reduce(Amount.zero(), (a1,a2) -> a1.add(a2)).toString());
     mediator.onExpensesLoaded(expenses);
     
+    ChartPanel<Measurable<Amount>> panel = new BarChartPanel<Measurable<Amount>>(new Dimension(600,600));
+    
+    List<Pair<Timestamp, List<Expense>>> byDay = expenses.byDay();
+    
+    List<Measurable<Amount>> byDayAmounts = byDay.stream()
+        .map(p -> Measurable.of(
+            Expense.amount(p.second, Currency.EUR).chartValue(), 
+            p.first.toString(), 
+            Amount.zero())
+        )
+        .collect(Collectors.toList());
+    
+    panel.add(byDayAmounts);
+    panel.refresh();
+    
+    WrapperFrame<?> frame = UIUtils.buildFrame(panel, "Expenses By Day");
+    frame.exitOnClose();
+    frame.setVisible(true);
+
     if (true)
       return;
 
-    PieChartPanel<MultiAmount> panel = new PieChartPanel<>(new Dimension(600,600));
+    /*PieChartPanel<MultiAmount> panel = new PieChartPanel<>(new Dimension(600,600));
     panel.addListener(new PieChartMouseListener() {
       @Override public void enteredPie() { System.out.println("Entered Pie"); }
       @Override public void exitedPie() { System.out.println("Exited Pie"); }
@@ -126,20 +148,6 @@ public class App
     
     Amount camount = expenses.total(Currency.EUR);
     
-    System.out.println(camount);
-    
-    /*List<Sample> samples = new ArrayList<>();
-    for (int i = 0; i < 10; ++i)
-    {
-      samples.add(new Sample(ThreadLocalRandom.current().nextFloat()*50.0f));
-    }
-    
-    PieChartPanel<Sample> canvas = new PieChartPanel<Sample>(new Dimension(800,600));
-    canvas.setAutoRebuild(true);
-    canvas.add(samples);
-    
-    WrapperFrame<?> frame = UIUtils.buildFrame(canvas, "Chart");
-    frame.exitOnClose();
-    frame.setVisible(true);*/
+    System.out.println(camount);*/
   }
 }

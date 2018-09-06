@@ -6,4 +6,5 @@ public interface Category
 {
   String caption();
   default Category parent() { return null; }
+  default Category root() { return null; }
 }

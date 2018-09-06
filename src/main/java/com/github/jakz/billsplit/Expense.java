@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import com.github.jakz.billsplit.data.Amount;
 import com.github.jakz.billsplit.data.Category;
@@ -65,6 +67,7 @@ public class Expense implements Measurable
   public Category category() { return category; }
   public Timestamp timestamp() { return timestamp; }
   
+  public Stream<Share<Amount>> stream() { return amounts.stream(); }
   public ExpenseAmounts amounts() { return amounts; }
   public Amount amount() { return amount(ExchangeRates.Provider.rates().baseCurrency()); }
   public Amount amount(Currency currency) { return amounts.amount(currency); }
@@ -85,5 +88,11 @@ public class Expense implements Measurable
    );
     
    return new MultiAmount(amounts.values());
+  }
+  
+  public static Amount amount(Iterable<Expense> i, Currency currency)
+  {
+    return StreamSupport.stream(i.spliterator(), false)
+      .reduce(Amount.zero(), (v,e) -> v.add(e.amount(currency)), (k,j) -> k.add(j));
   }
 }
