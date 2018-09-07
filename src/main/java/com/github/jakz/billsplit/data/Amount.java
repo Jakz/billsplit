@@ -71,6 +71,8 @@ public class Amount implements Measurable, Comparable<Amount>
   public float unprecise() { return rounding.apply(amount).getNumber().floatValue(); }
   public float chartValue() { return unprecise(); }
   
+  public boolean isNegative() { return amount.isNegative(); }
+  
   public static Amount zero() { return Amount.of(0.0f, ExchangeRates.Provider.rates().baseCurrency()); }
   
   public static Amount of(float value, Currency currency)
@@ -127,6 +129,11 @@ public class Amount implements Measurable, Comparable<Amount>
   {
     return new Amount(amount.multiply(v), currency);
   }
+
+  public Amount negate()
+  {
+    return new Amount(amount.negate(), currency);
+  }
   
   public Amount add(Amount amount)
   {    
@@ -134,6 +141,14 @@ public class Amount implements Measurable, Comparable<Amount>
       throw new IllegalArgumentException("Cannot add two amounts of different currencies");
     
     return new Amount(this.amount.add(amount.amount), currency);
+  }
+  
+  public Amount subtract(Amount amount)
+  {    
+    if (currency != amount.currency)
+      throw new IllegalArgumentException("Cannot add two amounts of different currencies");
+    
+    return new Amount(this.amount.subtract(amount.amount), currency);
   }
 
   @Override

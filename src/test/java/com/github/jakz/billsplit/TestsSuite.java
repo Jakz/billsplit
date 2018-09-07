@@ -28,7 +28,11 @@ import junit.framework.TestSuite;
   AmountTests.class,
   MultiAmountTests.class,
   WeightedGroupTests.class,
+  DebtTests.class,
+  
+  
   ExchangeRatesTests.class,
+  
   
   JsonTimestampTests.class,
   JsonExpenseAmountsTests.class
