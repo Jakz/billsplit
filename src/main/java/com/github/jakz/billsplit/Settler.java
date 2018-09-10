@@ -48,7 +48,7 @@ public class Settler
     debts.forEach(Debt::positivize);
   }
   
-  public List<Debt> simplify(List<Debt> debts)
+  public List<Debt> simplifyDirectDebts(List<Debt> debts)
   {
     Map<Pair<Person, Person>, Map<Currency, Amount>> amounts = new HashMap<>();
 
@@ -87,5 +87,10 @@ public class Settler
     simplified.removeIf(d -> d.amount.isZero());
     
     return simplified;
+  }
+  
+  public List<Debt> settle(List<Debt> debts)
+  {
+    return null;
   }
 }
