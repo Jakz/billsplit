@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 import com.github.jakz.billsplit.data.Person;
 import com.pixbits.lib.lang.Pair;
 
-public class WeightedGroup
+public class WeightedGroup implements Iterable<Share<Float>>
 {
   private final List<Share<Float>> people;
   
@@ -61,8 +61,6 @@ public class WeightedGroup
   public float weight(String person) { return people.stream().filter(s -> s.person.nickname().equals(person)).findFirst().get().value; }
   public float weight(Person person) { return people.stream().filter(s -> s.person == person).findFirst().map(s -> s.value).orElse(0.0f); }
   
-  public Stream<Share<Float>> stream()
-  {
-    return people.stream();
-  }
+  public Stream<Share<Float>> stream() { return people.stream(); }
+  @Override public Iterator<Share<Float>> iterator() { return people.iterator(); }
 }

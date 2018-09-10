@@ -71,6 +71,7 @@ public class Amount implements Measurable, Comparable<Amount>
   public float unprecise() { return rounding.apply(amount).getNumber().floatValue(); }
   public float chartValue() { return unprecise(); }
   
+  public boolean isZero() { return amount.isZero(); }
   public boolean isNegative() { return amount.isNegative(); }
   
   public static Amount zero() { return Amount.of(0.0f, ExchangeRates.Provider.rates().baseCurrency()); }

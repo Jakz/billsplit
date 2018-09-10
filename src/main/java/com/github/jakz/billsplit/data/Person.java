@@ -18,6 +18,7 @@ public class Person implements Comparable<Person>
   @Override
   public int compareTo(Person o) { return nickname.compareTo(o.nickname); }
   
+  public String toString() { return nickname; }
   public int hashCode() { return nickname.hashCode(); }
   public boolean equals(Object o) { return o instanceof Person && ((Person)o).nickname.equals(nickname); }
 }

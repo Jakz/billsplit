@@ -23,6 +23,8 @@ public class Debt
     else
       return false;
   }
+  
+  public String toString() { return String.format("(%s, %s, %s)", debtor, creditor, amount); }
  
   
   public Debt positivize()

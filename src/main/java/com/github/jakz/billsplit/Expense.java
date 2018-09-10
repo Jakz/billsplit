@@ -48,6 +48,16 @@ public class Expense implements Measurable
     );
   }
   
+  public static Expense of(ExpenseAmounts amounts, WeightedGroup sharers)
+  {
+    return new Expense(amounts, null, sharers, null, null);
+  }
+
+  public static Expense of(Amount amount, Person owner, WeightedGroup sharers)
+  {
+    return new Expense(new ExpenseAmounts(owner, amount), null, sharers, null, null);
+  }
+  
   public static Expense of(Amount amount, Person owner, Group sharers, Category category, String title)
   {
     return new Expense(amount, owner, null, sharers, category, title);
