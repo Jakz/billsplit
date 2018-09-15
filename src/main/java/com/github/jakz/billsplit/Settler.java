@@ -15,7 +15,16 @@ import com.pixbits.lib.lang.Pair;
 
 public class Settler
 {
-  public List<Debt> generateDebts(Expense expense)
+  public List<Debt> generateDebts(ExpenseSet expenses, final Currency currency)
+  {
+    return expenses.stream()
+        .map(e -> generateDebts(e, currency))
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+  }
+  
+  public List<Debt> generateDebts(Expense expense) { return generateDebts(expense, null); }
+  public List<Debt> generateDebts(Expense expense, final Currency currency)
   {
     /* for each person which had benefit from the expense generate a debt for each contributor */
     WeightedGroup quotas = expense.quotas();
@@ -29,8 +38,8 @@ public class Settler
       {
         Person debtor = quote.person;
         Person creditor = share.person;
-        Amount amount = share.value.multiply(quote.value);
-        
+        Amount amount = (currency == null ? share.value : share.value.convert(currency)).multiply(quote.value);
+                
         debts.add(new Debt(debtor, creditor, amount));
       }
     }
@@ -43,9 +52,9 @@ public class Settler
     return debts.stream().filter(debt -> debt.debtor != debt.creditor).collect(Collectors.toList());
   }
   
-  public void positivize(List<Debt> debts)
+  public List<Debt> positivize(List<Debt> debts)
   {
-    debts.forEach(Debt::positivize);
+    return debts.stream().map(Debt::positivize).collect(Collectors.toList());
   }
   
   public List<Debt> simplifyDirectDebts(List<Debt> debts)
@@ -91,6 +100,10 @@ public class Settler
   
   public List<Debt> settle(List<Debt> debts)
   {
-    return null;
+    debts = simplifyDirectDebts(debts);
+    debts = positivize(debts);
+    debts = pruneSelfOwedDebts(debts);
+    
+    return debts;
   }
 }

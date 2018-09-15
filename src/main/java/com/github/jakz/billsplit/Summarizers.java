@@ -3,6 +3,7 @@ package com.github.jakz.billsplit;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -35,46 +36,46 @@ public class Summarizers
       .reduce(Amount.zero(), (v,e) -> v.add(e.value.convert(currency)), (k,j) -> k.add(j));
   }
   
-  public static List<SummaryEntry> byDay(ExpenseSet expenses)
+  public static List<SummaryEntry> byDay(ExpenseSet expenses, Currency currency)
   {
     List<Pair<Timestamp, List<Expense>>> byDay = expenses.byDay();
     Collections.sort(byDay, Comparator.comparing(p -> p.first));
 
     List<SummaryEntry> entries = byDay.stream()
-        .map(p -> SummaryEntry.of(p.first.toString(), expenseSum(p.second, Currency.EUR)))
+        .map(p -> SummaryEntry.of(p.first.toString(), expenseSum(p.second, currency)))
         .collect(Collectors.toList());
     
     return entries;
   }
   
-  public static List<SummaryEntry> byRootCategory(ExpenseSet expenses)
+  public static List<SummaryEntry> byRootCategory(ExpenseSet expenses, Currency currency)
   {
     List<Pair<Category, List<Expense>>> grouped = expenses.byCategory(true);
 
     List<SummaryEntry> entries = grouped.stream()
-        .map(p -> SummaryEntry.of(p.first.toString(), expenseSum(p.second, Currency.EUR)))
+        .map(p -> SummaryEntry.of(p.first.toString(), expenseSum(p.second, currency)))
         .collect(Collectors.toList());
 
     return entries;
   }
   
-  public static List<SummaryEntry> spentByPerson(ExpenseSet expenses)
+  public static List<SummaryEntry> spentByPerson(ExpenseSet expenses, Optional<Currency> currency)
   {
     List<Pair<Person, List<Share<Amount>>>> grouped = expenses.groupByPersonExpenses();
 
     List<SummaryEntry> entries = grouped.stream()
-        .map(p -> SummaryEntry.of(p.first.nickname(), shareSum(p.second, Currency.EUR)))
+        .map(p -> SummaryEntry.of(p.first.nickname(), shareSum(p.second, currency)))
         .collect(Collectors.toList());
 
     return entries;
   }
   
-  public static List<SummaryEntry> owedByPerson(ExpenseSet expenses)
+  public static List<SummaryEntry> owedByPerson(ExpenseSet expenses, Optional<Currency> currency)
   {
     List<Pair<Person, List<MultiAmount>>> grouped = expenses.groupByPersonOwed();
 
     List<SummaryEntry> entries = grouped.stream()
-        .map(p -> SummaryEntry.of(p.first.nickname(), multiAmountSum(p.second).collapse(Currency.EUR)))
+        .map(p -> SummaryEntry.of(p.first.nickname(), multiAmountSum(p.second).collapse(currency)))
         .collect(Collectors.toList());
 
     return entries;

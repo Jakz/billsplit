@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import com.github.jakz.billsplit.data.Amount;
 import com.github.jakz.billsplit.data.Category;
 import com.github.jakz.billsplit.data.Currency;
+import com.github.jakz.billsplit.data.Debt;
 import com.github.jakz.billsplit.data.Group;
 import com.github.jakz.billsplit.data.MultiAmount;
 import com.github.jakz.billsplit.data.Person;
@@ -31,6 +32,7 @@ import com.github.jakz.billsplit.ui.Mediator;
 import com.github.jakz.billsplit.ui.SummaryBarBehavior;
 import com.github.jakz.billsplit.ui.SummaryEntry;
 import com.github.jakz.billsplit.ui.SummaryTablePanel;
+import com.github.jakz.billsplit.ui.TotalsPanel;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.pixbits.lib.lang.Pair;
@@ -112,15 +114,15 @@ public class App
     System.out.printf("Loaded %d expenses for %s\n", expenses.size(), expenses.amounts().map(e -> e.total(Currency.EUR)).reduce(Amount.zero(), (a1,a2) -> a1.add(a2)).toString());
     mediator.onExpensesLoaded(expenses);
     
-    WrapperFrame<SummaryTablePanel<SummaryEntry>> summaryFrame = UIUtils.buildFrame(new SummaryTablePanel<>(null), "Summary");
-    List<SummaryEntry> summaryEntries = Summarizers.owedByPerson(expenses);
+    List<Debt> debts = new Settler().generateDebts(expenses, Currency.EUR);
+    debts = new Settler().settle(debts);
+    debts.forEach(d -> System.out.println(d));
+
+    WrapperFrame<TotalsPanel> summaryFrame = UIUtils.buildFrame(new TotalsPanel(), "Totals");
     
     summaryFrame.centerOnScreen();
     summaryFrame.setVisible(true);
-    
-    summaryFrame.panel().setBehavior(SummaryBarBehavior.ofAveraging(summaryEntries, t -> t.amount.convert(Currency.EUR).unprecise(), (t,f) -> StringUtils.toPercent(f, 2)+"%"));
-    summaryFrame.panel().setData(DataSource.of(summaryEntries));
-
+    summaryFrame.panel().setData(expenses);
     
     /*ChartPanel<Measurable<Amount>> panel = new BarChartPanel<Measurable<Amount>>(new Dimension(600,600));
     

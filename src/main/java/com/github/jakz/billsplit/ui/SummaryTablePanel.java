@@ -34,7 +34,7 @@ public class SummaryTablePanel<T extends SummaryEntry> extends JPanel
  
   SummaryBarBehavior<T> behavior;
   
-  public SummaryTablePanel(Mediator mediator)
+  public SummaryTablePanel(Dimension dimension, Mediator mediator)
   {
     this.mediator = mediator;
     table = new JTable();
@@ -52,7 +52,7 @@ public class SummaryTablePanel<T extends SummaryEntry> extends JPanel
     
     setLayout(new BorderLayout());
     JScrollPane scrollPane = new JScrollPane(table);
-    scrollPane.setPreferredSize(new Dimension(1200, 800));
+    scrollPane.setPreferredSize(dimension);
     add(scrollPane, BorderLayout.CENTER);
   }
   
