@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -45,11 +46,11 @@ public class TotalsPanel extends JPanel
   
   public void setData(ExpenseSet expenses)
   {
-    List<SummaryEntry> totalsOwed = Summarizers.owedByPerson(expenses, Currency.EUR);
+    List<SummaryEntry> totalsOwed = Summarizers.owedByPerson(expenses, Optional.empty());
     this.totalsOwed.setBehavior(SummaryBarBehavior.ofAveraging(totalsOwed, t -> t.amount.convert(Currency.EUR).unprecise(), (t,f) -> StringUtils.toPercent(f, 2)+"%"));
     this.totalsOwed.setData(DataSource.of(totalsOwed));
     
-    List<SummaryEntry> totalsSpent = Summarizers.spentByPerson(expenses, Currency.EUR);
+    List<SummaryEntry> totalsSpent = Summarizers.spentByPerson(expenses, Optional.empty());
     this.totalsSpent.setBehavior(SummaryBarBehavior.ofAveraging(totalsSpent, t -> t.amount.convert(Currency.EUR).unprecise(), (t,f) -> StringUtils.toPercent(f, 2)+"%"));
     this.totalsSpent.setData(DataSource.of(totalsSpent));
     

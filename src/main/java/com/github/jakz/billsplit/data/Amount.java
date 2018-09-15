@@ -138,8 +138,11 @@ public class Amount implements Measurable, Comparable<Amount>
   
   public Amount add(Amount amount)
   {    
+    if (amount.isZero()) return this;
+    else if (this.isZero()) return amount;
+    
     if (currency != amount.currency)
-      throw new IllegalArgumentException("Cannot add two amounts of different currencies");
+      throw new IllegalArgumentException(String.format("Cannot add two amounts of different currencies: %s + %s", this, amount));
     
     return new Amount(this.amount.add(amount.amount), currency);
   }

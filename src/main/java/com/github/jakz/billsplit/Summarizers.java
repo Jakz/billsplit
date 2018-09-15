@@ -3,8 +3,10 @@ package com.github.jakz.billsplit;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.github.jakz.billsplit.data.Amount;
@@ -36,6 +38,16 @@ public class Summarizers
       .reduce(Amount.zero(), (v,e) -> v.add(e.value.convert(currency)), (k,j) -> k.add(j));
   }
   
+  public static List<Amount> shareSum(Iterable<Share<Amount>> i)
+  {
+    Map<Currency, List<Share<Amount>>> amounts = StreamSupport.stream(i.spliterator(), false)
+        .collect(Collectors.groupingBy(s -> s.value.currency()));
+    
+    return amounts.values().stream().map(list -> {
+      return list.stream().reduce(Amount.zero(), (v, s) -> v.add(s.value), (v1, v2) -> v1.add(v2));
+    }).collect(Collectors.toList());
+  }
+  
   public static List<SummaryEntry> byDay(ExpenseSet expenses, Currency currency)
   {
     List<Pair<Timestamp, List<Expense>>> byDay = expenses.byDay();
@@ -64,8 +76,14 @@ public class Summarizers
     List<Pair<Person, List<Share<Amount>>>> grouped = expenses.groupByPersonExpenses();
 
     List<SummaryEntry> entries = grouped.stream()
-        .map(p -> SummaryEntry.of(p.first.nickname(), shareSum(p.second, currency)))
-        .collect(Collectors.toList());
+        .map(p -> {
+          List<Amount> converted = currency.isPresent() ? 
+            Collections.singletonList(shareSum(p.second, currency.get())) :
+            shareSum(p.second);
+          
+          return converted.stream().map(e -> SummaryEntry.of(p.first.nickname(), e));
+        })
+        .flatMap(s -> s).collect(Collectors.toList());
 
     return entries;
   }
@@ -75,8 +93,13 @@ public class Summarizers
     List<Pair<Person, List<MultiAmount>>> grouped = expenses.groupByPersonOwed();
 
     List<SummaryEntry> entries = grouped.stream()
-        .map(p -> SummaryEntry.of(p.first.nickname(), multiAmountSum(p.second).collapse(currency)))
-        .collect(Collectors.toList());
+        .map(p -> {
+          Stream<Amount> converted = currency.isPresent() ? 
+              Collections.singleton(multiAmountSum(p.second).collapse(currency.get())).stream() :
+              multiAmountSum(p.second).stream();
+              
+           return converted.map(e -> SummaryEntry.of(p.first.nickname(), e));
+        }).flatMap(s -> s).collect(Collectors.toList());
 
     return entries;
   }
