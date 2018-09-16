@@ -1,5 +1,8 @@
 package com.github.jakz.billsplit.data;
 
+import com.pixbits.lib.algorithm.graphs.DirectedEdge;
+import com.pixbits.lib.algorithm.graphs.Vertex;
+
 public class Debt
 {
   public final Person debtor;

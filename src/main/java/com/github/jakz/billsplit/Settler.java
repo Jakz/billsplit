@@ -10,6 +10,7 @@ import com.github.jakz.billsplit.data.Amount;
 import com.github.jakz.billsplit.data.Currency;
 import com.github.jakz.billsplit.data.Debt;
 import com.github.jakz.billsplit.data.Person;
+import com.pixbits.lib.algorithm.graphs.DirectedGraph;
 import com.pixbits.lib.lang.CommutablePair;
 import com.pixbits.lib.lang.Pair;
 
@@ -105,5 +106,14 @@ public class Settler
     debts = pruneSelfOwedDebts(debts);
     
     return debts;
+  }
+  
+  public void findCycles(List<Debt> debts)
+  {
+    DirectedGraph<Person, Amount> graph = DirectedGraph.of(
+        debts,
+        d -> new Pair<>(d.debtor, d.creditor),
+        d -> d.amount);
+    
   }
 }
