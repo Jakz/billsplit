@@ -9,38 +9,37 @@ import java.util.stream.StreamSupport;
 
 import com.github.jakz.billsplit.data.Amount;
 import com.pixbits.lib.functional.MinMaxTotCollector;
+import com.pixbits.lib.lang.AtomicFloat;
 
-public interface SummaryBarBehavior<T extends SummaryEntry>
+public interface SummaryBarBehavior<T>
 {
-  public float barWidthFor(T entry);
-  public String barLabelFor(T entry);
+  public float barWidthFor(SummaryEntry<T> entry);
+  public String barLabelFor(SummaryEntry<T> entry);
   
-  public static <U extends SummaryEntry> SummaryBarBehavior<U> ofAveraging(Iterable<U> data, Function<U, Float> classifier, BiFunction<U, Float, String> labeler)
+  public static <U> SummaryBarBehavior<U> ofAveraging(Iterable<SummaryEntry<U>> data, Function<SummaryEntry<U>, Float> classifier, BiFunction<SummaryEntry<U>, Float, String> labeler)
   {
-    Stream<U> stream = StreamSupport.stream(data.spliterator(), false);
+    Stream<SummaryEntry<U>> stream = StreamSupport.stream(data.spliterator(), false);
     
-    //final float total = (float)(StreamSupport.stream(data.spliterator(), false)).map(classifier).mapToDouble(f -> f).sum();
-    //final float max = (float)stream.map(classifier).mapToDouble(f -> f).max().getAsDouble();
-    MinMaxTotCollector<U, Float> collector = stream.collect(
-      MinMaxTotCollector.of(
-        classifier,
-        (BinaryOperator<Float>) (s1, s2) -> s1 + s2,
-        0.0f
-      )
-    );
+    AtomicFloat max = new AtomicFloat(0.0f);
+    AtomicFloat tot = new AtomicFloat(0.0f);
+    
+    stream.forEach(u -> {
+      max.set(Math.max(max.get(), classifier.apply(u)));
+      tot.set(tot.get() + classifier.apply(u));
+    });
 
     return new SummaryBarBehavior<>()
     {
       @Override
-      public float barWidthFor(U entry)
+      public float barWidthFor(SummaryEntry<U> entry)
       {
-        return classifier.apply(entry) / collector.max().amount.unprecise();
+        return classifier.apply(entry) / max.get();
       }
 
       @Override
-      public String barLabelFor(U entry)
+      public String barLabelFor(SummaryEntry<U> entry)
       {
-        return labeler.apply(entry, entry.amount.unprecise() / collector.total());
+        return labeler.apply(entry, entry.amount.unprecise() / tot.get());
       }
     };
   }

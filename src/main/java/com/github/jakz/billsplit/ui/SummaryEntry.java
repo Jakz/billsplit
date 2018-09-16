@@ -2,29 +2,38 @@ package com.github.jakz.billsplit.ui;
 
 import com.github.jakz.billsplit.data.Amount;
 
-public class SummaryEntry implements Comparable<SummaryEntry>
+public final class SummaryEntry<T> implements Comparable<SummaryEntry<T>>
 {
   public final String title;
   public final Amount amount;
+  public final T data;
   
-  private SummaryEntry(String title, Amount amount)
+  private SummaryEntry(T data, String title, Amount amount)
   {
+    this.data = data;
     this.title = title;
     this.amount = amount;
   }
   
-  public static SummaryEntry of(String title, Amount amount)
+  public static SummaryEntry<?> of(String title, Amount amount)
   {
-    return new SummaryEntry(title, amount);
+    return new SummaryEntry<>(null, title, amount);
   }
   
-  public SummaryEntry combine(SummaryEntry o)
+  public static <U> SummaryEntry<U> of(U data, String title, Amount amount)
   {
-    return of("", amount.add(o.amount));
+    return new SummaryEntry<>(data, title, amount);
+  }
+  
+  public SummaryEntry<?> combine(SummaryEntry<?> o)
+  {
+    if (data != o.data)
+      throw new IllegalArgumentException(String.format("Can't combine SummaryEntry with different data: %s != %s", data, o.data));
+    return of(data, "", amount.add(o.amount));
   }
 
   @Override
-  public int compareTo(SummaryEntry o)
+  public int compareTo(SummaryEntry<T> o)
   {
     return amount.compareTo(o.amount);
   }

@@ -48,57 +48,57 @@ public class Summarizers
     }).collect(Collectors.toList());
   }
   
-  public static List<SummaryEntry> byDay(ExpenseSet expenses, Currency currency)
+  public static List<SummaryEntry<Timestamp>> byDay(ExpenseSet expenses, Currency currency)
   {
     List<Pair<Timestamp, List<Expense>>> byDay = expenses.byDay();
     Collections.sort(byDay, Comparator.comparing(p -> p.first));
 
-    List<SummaryEntry> entries = byDay.stream()
-        .map(p -> SummaryEntry.of(p.first.toString(), expenseSum(p.second, currency)))
+    List<SummaryEntry<Timestamp>> entries = byDay.stream()
+        .map(p -> SummaryEntry.of(p.first, p.first.toString(), expenseSum(p.second, currency)))
         .collect(Collectors.toList());
     
     return entries;
   }
   
-  public static List<SummaryEntry> byRootCategory(ExpenseSet expenses, Currency currency)
+  public static List<SummaryEntry<Category>> byRootCategory(ExpenseSet expenses, Currency currency)
   {
     List<Pair<Category, List<Expense>>> grouped = expenses.byCategory(true);
 
-    List<SummaryEntry> entries = grouped.stream()
-        .map(p -> SummaryEntry.of(p.first.toString(), expenseSum(p.second, currency)))
+    List<SummaryEntry<Category>> entries = grouped.stream()
+        .map(p -> SummaryEntry.of(p.first, p.first.toString(), expenseSum(p.second, currency)))
         .collect(Collectors.toList());
 
     return entries;
   }
   
-  public static List<SummaryEntry> spentByPerson(ExpenseSet expenses, Optional<Currency> currency)
+  public static List<SummaryEntry<Person>> spentByPerson(ExpenseSet expenses, Optional<Currency> currency)
   {
     List<Pair<Person, List<Share<Amount>>>> grouped = expenses.groupByPersonExpenses();
 
-    List<SummaryEntry> entries = grouped.stream()
+    List<SummaryEntry<Person>> entries = grouped.stream()
         .map(p -> {
           List<Amount> converted = currency.isPresent() ? 
             Collections.singletonList(shareSum(p.second, currency.get())) :
             shareSum(p.second);
           
-          return converted.stream().map(e -> SummaryEntry.of(p.first.nickname(), e));
+          return converted.stream().map(e -> SummaryEntry.of(p.first, p.first.nickname(), e));
         })
         .flatMap(s -> s).collect(Collectors.toList());
 
     return entries;
   }
   
-  public static List<SummaryEntry> owedByPerson(ExpenseSet expenses, Optional<Currency> currency)
+  public static List<SummaryEntry<Person>> owedByPerson(ExpenseSet expenses, Optional<Currency> currency)
   {
     List<Pair<Person, List<MultiAmount>>> grouped = expenses.groupByPersonOwed();
 
-    List<SummaryEntry> entries = grouped.stream()
+    List<SummaryEntry<Person>> entries = grouped.stream()
         .map(p -> {
           Stream<Amount> converted = currency.isPresent() ? 
               Collections.singleton(multiAmountSum(p.second).collapse(currency.get())).stream() :
               multiAmountSum(p.second).stream();
               
-           return converted.map(e -> SummaryEntry.of(p.first.nickname(), e));
+           return converted.map(e -> SummaryEntry.of(p.first, p.first.nickname(), e));
         }).flatMap(s -> s).collect(Collectors.toList());
 
     return entries;

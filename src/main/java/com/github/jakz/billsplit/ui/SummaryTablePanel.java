@@ -10,6 +10,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.util.Optional;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -17,20 +18,23 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import com.github.jakz.billsplit.data.Amount;
 import com.github.jakz.billsplit.data.Currency;
 import com.pixbits.lib.lang.StringUtils;
 import com.pixbits.lib.ui.color.ColorCache;
+import com.pixbits.lib.ui.color.HashColorCache;
 import com.pixbits.lib.ui.color.PastelColorGenerator;
 import com.pixbits.lib.ui.table.ColumnSpec;
 import com.pixbits.lib.ui.table.DataSource;
 import com.pixbits.lib.ui.table.TableModel;
 
-public class SummaryTablePanel<T extends SummaryEntry> extends JPanel
+public class SummaryTablePanel<T> extends JPanel
 {
   private final Mediator mediator;
-  DataSource<T> data;
+  DataSource<SummaryEntry<T>> data;
   JTable table;
-  TableModel<T> model;
+  TableModel<SummaryEntry<T>> model;
+  BarTableCellRenderer barRenderer;
  
   SummaryBarBehavior<T> behavior;
   
@@ -42,10 +46,11 @@ public class SummaryTablePanel<T extends SummaryEntry> extends JPanel
     model = new TableModel<>(table, DataSource.empty());
     
     model.addColumn(new ColumnSpec<>("Label", String.class, se -> se.title));
-    model.addColumn(new ColumnSpec<>("Value", String.class, se -> se.amount.toString()));
+    model.addColumn(new ColumnSpec<>("Value", Amount.class, se -> se.amount));
     
-    ColumnSpec<T, ?> barColumn = new ColumnSpec<>("", SummaryEntry.class, se -> se);
-    barColumn.setRenderer(new BarTableCellRenderer());
+    barRenderer = new BarTableCellRenderer();
+    ColumnSpec<SummaryEntry<T>, ?> barColumn = new ColumnSpec<>("", SummaryEntry.class, se -> se);
+    barColumn.setRenderer(barRenderer);
     model.addColumn(barColumn);
 
     model.fireTableStructureChanged();
@@ -56,7 +61,12 @@ public class SummaryTablePanel<T extends SummaryEntry> extends JPanel
     add(scrollPane, BorderLayout.CENTER);
   }
   
-  public void setData(DataSource<T> data)
+  public void setColorCache(ColorCache<T> colorCache)
+  {
+    barRenderer.setColorCache(s -> colorCache.get(s.data));
+  }
+  
+  public void setData(DataSource<SummaryEntry<T>> data)
   {
     this.data = data;
     model.setData(data);
@@ -70,19 +80,24 @@ public class SummaryTablePanel<T extends SummaryEntry> extends JPanel
   
   class BarTableCellRenderer extends DefaultTableCellRenderer
   {
-    private final ColorCache<T> colorCache;
+    private ColorCache<SummaryEntry<T>> colorCache;
     
-    T entry;
+    SummaryEntry<T> entry;
     int textReservedWidth;
     
     public BarTableCellRenderer()
     {
-      colorCache = new ColorCache<>(new PastelColorGenerator());
+      colorCache = new HashColorCache<>(new PastelColorGenerator());
       
       setOpaque(true);
       
       FontMetrics metrics = getFontMetrics(getFont());
       textReservedWidth = metrics.stringWidth("100.0%") + 10;
+    }
+    
+    public void setColorCache(ColorCache<SummaryEntry<T>> cache)
+    {
+      this.colorCache = cache;
     }
         
     private void drawCenteredString(Graphics g, String text, Rectangle rect, Font font)
@@ -124,7 +139,7 @@ public class SummaryTablePanel<T extends SummaryEntry> extends JPanel
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
     {
       JLabel label = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);   
-      this.entry = (T)value;
+      this.entry = (SummaryEntry<T>)value;
       label.setText("");
       return label;
     }
