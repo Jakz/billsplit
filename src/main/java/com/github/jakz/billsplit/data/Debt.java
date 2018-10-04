@@ -27,6 +27,7 @@ public class Debt
       return false;
   }
   
+  public Amount amount() { return amount; }
   public String toString() { return String.format("(%s, %s, %s)", debtor, creditor, amount); }
  
   

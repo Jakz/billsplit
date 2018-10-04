@@ -1,9 +1,11 @@
 package com.github.jakz.billsplit;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.github.jakz.billsplit.data.Amount;
@@ -11,6 +13,8 @@ import com.github.jakz.billsplit.data.Currency;
 import com.github.jakz.billsplit.data.Debt;
 import com.github.jakz.billsplit.data.Person;
 import com.pixbits.lib.algorithm.graphs.DirectedGraph;
+import com.pixbits.lib.algorithm.graphs.TarjanSCC;
+import com.pixbits.lib.algorithm.graphs.Vertex;
 import com.pixbits.lib.lang.CommutablePair;
 import com.pixbits.lib.lang.Pair;
 
@@ -104,16 +108,44 @@ public class Settler
     debts = simplifyDirectDebts(debts);
     debts = positivize(debts);
     debts = pruneSelfOwedDebts(debts);
+    settleCycles(debts);
     
     return debts;
   }
   
-  public void findCycles(List<Debt> debts)
+  public List<Debt> settleCycles(List<Debt> debts)
   {
-    DirectedGraph<Person, Amount> graph = DirectedGraph.of(
+    DirectedGraph<Person, Debt> graph = DirectedGraph.of(
         debts,
         d -> new Pair<>(d.debtor, d.creditor),
-        d -> d.amount);
+        d -> d);
     
+    TarjanSCC<Person, Debt> tarjan = new TarjanSCC<>(graph);
+    
+    Set<TarjanSCC.SCC<Person,Debt>> cycles = tarjan.compute();
+    
+    /* remove 1 vertex only SCCs */
+    cycles = cycles.stream()
+      .filter(s -> s.size() > 1)
+      .collect(Collectors.toSet());
+    
+    cycles.forEach(cycle -> {
+      List<Debt> involvedDebts = cycle.stream()
+        .filter(s -> s.origin() != null)
+        .map(s -> s.origin())
+        .map(e -> e.data())
+        .collect(Collectors.toList());
+      
+      if (involvedDebts.stream().map(Debt::amount).map(Amount::currency).distinct().count() > 1)
+        throw new IllegalArgumentException("Can't settle a cycle made of multiple currencies");
+      
+      Amount commonValue = involvedDebts.stream().map(Debt::amount).min(Comparator.naturalOrder()).get();
+      
+      involvedDebts.forEach(debt -> debt.amount.subtract(commonValue));
+    });
+    
+    debts.removeIf(d -> d.amount.isZero());
+    
+    return debts;
   }
 }

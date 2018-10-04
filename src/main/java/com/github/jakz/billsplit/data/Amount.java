@@ -36,7 +36,7 @@ public class Amount implements Measurable, Comparable<Amount>
 
   public Amount(float value, Currency currency)
   {
-    this(Money.of(value, currency.ref), currency);
+    this(Money.of(value, currency.isReal() ? currency.ref : Currency.EUR.ref), currency);
   }
   
   private Amount(MonetaryAmount value, Currency currency)
@@ -49,7 +49,7 @@ public class Amount implements Measurable, Comparable<Amount>
   private static MonetaryAmountFormat formatter = MonetaryFormats.getAmountFormat(Locale.US);
   public String toString()
   {
-    return formatter.format(amount).toString();
+    return currency != Currency.NONE? formatter.format(amount).toString() : "0";
   }
   
   public int hashCode() { return Objects.hash(amount, currency); }
@@ -74,7 +74,7 @@ public class Amount implements Measurable, Comparable<Amount>
   public boolean isZero() { return amount.isZero(); }
   public boolean isNegative() { return amount.isNegative(); }
   
-  public static Amount zero() { return Amount.of(0.0f, ExchangeRates.Provider.rates().baseCurrency()); }
+  public static Amount zero() { return Amount.of(0.0f, Currency.NONE); }
   
   public static Amount of(float value, Currency currency)
   {
@@ -108,6 +108,8 @@ public class Amount implements Measurable, Comparable<Amount>
   
   public Amount convert(Currency currency)
   {
+    if (!currency.isReal())
+      throw new IllegalArgumentException("Can't convert to Currency.NONE");
     return ExchangeRates.Provider.rates().convertedValue(this, currency);
   }
   

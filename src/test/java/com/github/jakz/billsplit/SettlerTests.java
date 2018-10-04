@@ -69,7 +69,7 @@ public class SettlerTests
   
   /* simplification tests */
   
-  //@Test
+  @Test
   public void testSumOfPositiveDebts()
   {
     Person foo = new Person("foo"), bar = new Person("bar");
@@ -126,5 +126,40 @@ public class SettlerTests
     
     assertEquals(debts.size(), 1);
     assertEquals(new Debt(foo, bar, Amount.of("-5USD")), debts.get(0));
+  }
+  
+  /* cycles simplification tests */
+  
+  @Test
+  public void testCycleOfTwoPeople()
+  {
+    Person a = new Person("a"), b = new Person("b");
+    List<Debt> debts = new Settler().settleCycles(
+        Arrays.asList(new Debt[] { 
+            new Debt(a, b, Amount.of("5 USD")), 
+            new Debt(b, a, Amount.of("10 USD"))
+        })
+    );
+    
+    assertEquals(debts.size(), 1);
+    assertEquals(new Debt(b, a, Amount.of("5USD")), debts.get(0));
+  }
+  
+  @Test
+  public void testCycleOfThreePeople()
+  {
+    Person a = new Person("a"), b = new Person("b"), c = new Person("c");
+    List<Debt> debts = new Settler().settleCycles(
+        Arrays.asList(new Debt[] { 
+            new Debt(a, b, Amount.of("50 USD")), 
+            new Debt(b, c, Amount.of("20 USD")),
+            new Debt(c, a, Amount.of("10 USD"))
+        })
+    );
+    
+    assertEquals(debts.size(), 2);
+    assertEquals(new Debt(a, b, Amount.of("40USD")), debts.get(0));
+    assertEquals(new Debt(b, c, Amount.of("10USD")), debts.get(1));
+
   }
 }

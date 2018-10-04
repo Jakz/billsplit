@@ -80,8 +80,13 @@ public class Expense implements Measurable
   public WeightedGroup quotas() { return sharers; }
   public Stream<Share<Amount>> stream() { return amounts.stream(); }
   public ExpenseAmounts amounts() { return amounts; }
-  public Amount amount() { return amount(ExchangeRates.Provider.rates().baseCurrency()); }
+  //public Amount amount() { return amount(ExchangeRates.Provider.rates().baseCurrency()); }
   public Amount amount(Currency currency) { return amounts.amount(currency); }
+  public Optional<Amount> amount()
+  {
+    return amounts.isSingleCurrency() ? Optional.of(amount(amounts.get(0).value().currency())) : Optional.empty();
+  }
+  
   public float quota(Person person) { return sharers.weight(person); }
   
   @Override

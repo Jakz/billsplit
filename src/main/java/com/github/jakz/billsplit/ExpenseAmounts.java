@@ -40,13 +40,15 @@ public class ExpenseAmounts implements Iterable<Share<Amount>>
   }
   
   public boolean isMultiple() { return amounts.size() > 1; }
+  public boolean isSingleCurrency() { return !isMultiple() || stream().map(Share::value).map(Amount::currency).distinct().count() == 1; }
+  
   public int size() { return amounts.size(); }
   public Share<Amount> get(int i) { return amounts.get(i); }
 
   public Amount amount(Currency currency)
   {
     return amounts.stream().reduce(
-        Amount.of(0.0f, currency),
+        Amount.zero(),
         (a, p) -> a.add(p.value.convert(currency)),
         (a1, a2) -> a1.add(a2).convert(currency)
     );

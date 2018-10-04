@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -61,13 +62,14 @@ public class MultiAmount implements Iterable<Amount>, Measurable
     }
   }
   
+  public boolean isCollapsible() { return amounts.size() <= 1 || amounts.stream().map(Amount::currency).distinct().count() == 1; }
   public Amount total(Currency currency) { return collapse(currency); }
-  public Amount collapse() { return amounts.isEmpty() ? Amount.zero() : collapse(amounts.get(0).currency()); }
+  public Optional<Amount> collapse() { return Optional.of(amounts.isEmpty() ? Amount.zero() : collapse(amounts.get(0).currency())); }
   
   public Stream<Amount> stream() { return amounts.stream(); }
   public Iterator<Amount> iterator() { return amounts.iterator(); }
   public Amount[] array() { return amounts.toArray(new Amount[amounts.size()]); }
 
   @Override
-  public float chartValue() { return collapse().chartValue(); }
+  public float chartValue() { return collapse().get().chartValue(); }
 }

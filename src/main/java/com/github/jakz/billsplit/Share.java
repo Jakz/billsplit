@@ -15,6 +15,9 @@ public class Share<T>
     this.value = value;
   }
   
+  public Person person() { return person; }
+  public T value() { return value; }
+  
   @Override public int hashCode() { return Objects.hash(person, value); }
   @Override public boolean equals(Object o)
   {
