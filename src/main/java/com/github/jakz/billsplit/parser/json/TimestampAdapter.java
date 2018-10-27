@@ -1,4 +1,4 @@
-package com.github.jakz.billsplit.json;
+package com.github.jakz.billsplit.parser.json;
 
 import java.lang.reflect.Type;
 import java.util.regex.Matcher;
@@ -29,17 +29,15 @@ public class TimestampAdapter implements JsonAdapter<Timestamp>
       throw new JsonParseException("JSON Timestamp must be string");
     else 
     {
+      Timestamp value = Timestamp.of(json.getAsString());
+      
       String string = json.getAsString();
       
       Matcher matcher = timestampPattern.matcher(string);
       
-      if (matcher.matches())
+      if (value != null)
       {
-        int year = Integer.parseInt(matcher.group(1));
-        int month = Integer.parseInt(matcher.group(2));
-        int day = Integer.parseInt(matcher.group(3));
-        
-        return Timestamp.of(year, month, day);
+        return value;
       }
       else
         throw new JsonParseException("Wrong timestamp format: "+string);

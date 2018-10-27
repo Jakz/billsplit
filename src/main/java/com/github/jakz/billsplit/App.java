@@ -21,12 +21,14 @@ import com.github.jakz.billsplit.data.Group;
 import com.github.jakz.billsplit.data.MultiAmount;
 import com.github.jakz.billsplit.data.Person;
 import com.github.jakz.billsplit.data.Timestamp;
-import com.github.jakz.billsplit.json.CategoryAdapter;
-import com.github.jakz.billsplit.json.ExpenseAmountsAdapter;
-import com.github.jakz.billsplit.json.ExpenseDeserializer;
-import com.github.jakz.billsplit.json.ExpenseSetDeserializer;
-import com.github.jakz.billsplit.json.TimestampAdapter;
-import com.github.jakz.billsplit.json.WeightedGroupAdapter;
+import com.github.jakz.billsplit.parser.JsonParser;
+import com.github.jakz.billsplit.parser.SplitWiseParser;
+import com.github.jakz.billsplit.parser.json.CategoryAdapter;
+import com.github.jakz.billsplit.parser.json.ExpenseAmountsAdapter;
+import com.github.jakz.billsplit.parser.json.ExpenseDeserializer;
+import com.github.jakz.billsplit.parser.json.ExpenseSetDeserializer;
+import com.github.jakz.billsplit.parser.json.TimestampAdapter;
+import com.github.jakz.billsplit.parser.json.WeightedGroupAdapter;
 import com.github.jakz.billsplit.ui.ExpenseTablePanel;
 import com.github.jakz.billsplit.ui.Mediator;
 import com.github.jakz.billsplit.ui.SummaryBarBehavior;
@@ -70,29 +72,17 @@ public class App
   
   public static ExpenseSet loadData()
   {
-    environment = new Environment(null);
-    
-    GsonBuilder builder = new GsonBuilder();
-    builder.registerTypeAdapter(Timestamp.class, new TimestampAdapter());
-    builder.registerTypeAdapter(Category.class, new CategoryAdapter());
-    builder.registerTypeAdapter(ExpenseAmounts.class, new ExpenseAmountsAdapter(environment));
-    builder.registerTypeAdapter(WeightedGroup.class, new WeightedGroupAdapter(environment));
-    builder.registerTypeAdapter(ExpenseSet.class, new ExpenseSetDeserializer(environment));
-    builder.registerTypeAdapter(Expense.class, new ExpenseDeserializer(environment));
-
-    builder.setPrettyPrinting();
-    
-    Gson gson = builder.create();
-    
-    try (BufferedReader rdr = Files.newBufferedReader(Paths.get("expenses.json")))
-    {
-      return gson.fromJson(rdr, ExpenseSet.class);
-    } 
-    catch (IOException e)
+    try
+    {    
+      environment = new Environment(null);
+      return new SplitWiseParser().parse(Paths.get("expenses.csv"), environment);
+      //return new JsonParser().parse(Paths.get("expenses.json"), environment);
+    }
+    catch (Exception e)
     {
       e.printStackTrace();
       return null;
-    }  
+    }
   }
   
   public static void buildUI()

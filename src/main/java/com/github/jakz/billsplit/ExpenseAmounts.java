@@ -3,6 +3,7 @@ package com.github.jakz.billsplit;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.github.jakz.billsplit.data.Amount;
@@ -34,7 +35,7 @@ public class ExpenseAmounts implements Iterable<Share<Amount>>
     amounts.add(amount);
   }
   
-  void add(Person person, Amount amount)
+  public void add(Person person, Amount amount)
   {
     this.add(new Share<>(person, amount));
   }
@@ -56,4 +57,11 @@ public class ExpenseAmounts implements Iterable<Share<Amount>>
 
   public Stream<Share<Amount>> stream() { return amounts.stream(); }
   public Iterator<Share<Amount>> iterator() { return amounts.iterator(); }
+  
+  public String toString()
+  {
+    return amounts.stream()
+      .map(s -> s.toString())
+      .collect(Collectors.joining(", ", "[", "]"));
+  }
 }

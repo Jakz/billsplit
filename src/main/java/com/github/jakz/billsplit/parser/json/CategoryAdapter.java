@@ -1,4 +1,4 @@
-package com.github.jakz.billsplit.json;
+package com.github.jakz.billsplit.parser.json;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;

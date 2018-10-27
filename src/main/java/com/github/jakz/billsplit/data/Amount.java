@@ -73,6 +73,7 @@ public class Amount implements Measurable, Comparable<Amount>
   
   public boolean isZero() { return amount.isZero(); }
   public boolean isNegative() { return amount.isNegative(); }
+  public boolean isStrictlyPositive() { return amount.isPositive(); }
   
   public static Amount zero() { return Amount.of(0.0f, Currency.NONE); }
   
@@ -133,9 +134,19 @@ public class Amount implements Measurable, Comparable<Amount>
     return new Amount(amount.multiply(v), currency);
   }
 
+  public Amount divide(long v)
+  {
+    return new Amount(amount.divide(v), currency);
+  }
+  
   public Amount negate()
   {
     return new Amount(amount.negate(), currency);
+  }
+  
+  public Amount add(float value)
+  {
+    return add(Amount.of(value, currency));
   }
   
   public Amount add(Amount amount)

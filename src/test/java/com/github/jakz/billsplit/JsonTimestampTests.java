@@ -7,7 +7,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.github.jakz.billsplit.data.Timestamp;
-import com.github.jakz.billsplit.json.TimestampAdapter;
+import com.github.jakz.billsplit.parser.json.TimestampAdapter;
 import com.github.jakz.billsplit.support.Repeat;
 import com.github.jakz.billsplit.support.RepeatRule;
 import com.google.gson.JsonElement;

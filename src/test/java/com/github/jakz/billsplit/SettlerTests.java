@@ -109,7 +109,7 @@ public class SettlerTests
         })
     );
     
-    assertEquals(debts.size(), 1);
+    assertEquals(1, debts.size());
     assertEquals(new Debt(foo, bar, Amount.of("5USD")), debts.get(0));
   }
   
@@ -124,7 +124,7 @@ public class SettlerTests
         })
     );
     
-    assertEquals(debts.size(), 1);
+    assertEquals(1, debts.size());
     assertEquals(new Debt(foo, bar, Amount.of("-5USD")), debts.get(0));
   }
   
@@ -133,6 +133,8 @@ public class SettlerTests
   @Test
   public void testCycleOfTwoPeople()
   {
+    System.out.println("AAA");
+    
     Person a = new Person("a"), b = new Person("b");
     List<Debt> debts = new Settler().settleCycles(
         Arrays.asList(new Debt[] { 
@@ -141,8 +143,9 @@ public class SettlerTests
         })
     );
     
-    assertEquals(debts.size(), 1);
-    assertEquals(new Debt(b, a, Amount.of("5USD")), debts.get(0));
+    System.out.println("BBB");
+
+    assertEquals(Arrays.asList(new Debt(b, a, Amount.of("5USD"))), debts);
   }
   
   @Test
@@ -157,7 +160,7 @@ public class SettlerTests
         })
     );
     
-    assertEquals(debts.size(), 2);
+    assertEquals(2, debts.size());
     assertEquals(new Debt(a, b, Amount.of("40USD")), debts.get(0));
     assertEquals(new Debt(b, c, Amount.of("10USD")), debts.get(1));
 

@@ -43,6 +43,7 @@ public enum DefaultCategory implements Category
   
   EXCHANGE("Exchange", MISC),
   COMMISSION("Commission", MISC),
+  POOL_DEPOSIT("Pool Deposit", MISC),
   
   TICKET("Ticket", ATTRACTION),
   TOUR("Tour", ATTRACTION),

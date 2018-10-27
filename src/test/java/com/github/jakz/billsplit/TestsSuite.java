@@ -12,10 +12,10 @@ import com.github.jakz.billsplit.data.Category;
 import com.github.jakz.billsplit.data.Group;
 import com.github.jakz.billsplit.data.Person;
 import com.github.jakz.billsplit.data.Timestamp;
-import com.github.jakz.billsplit.json.CategoryAdapter;
-import com.github.jakz.billsplit.json.ExpenseAmountsAdapter;
-import com.github.jakz.billsplit.json.TimestampAdapter;
-import com.github.jakz.billsplit.json.WeightedGroupAdapter;
+import com.github.jakz.billsplit.parser.json.CategoryAdapter;
+import com.github.jakz.billsplit.parser.json.ExpenseAmountsAdapter;
+import com.github.jakz.billsplit.parser.json.TimestampAdapter;
+import com.github.jakz.billsplit.parser.json.WeightedGroupAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 

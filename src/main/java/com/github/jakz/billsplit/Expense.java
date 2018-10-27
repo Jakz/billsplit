@@ -15,6 +15,7 @@ import com.github.jakz.billsplit.data.Currency;
 import com.github.jakz.billsplit.data.Group;
 import com.github.jakz.billsplit.data.MultiAmount;
 import com.github.jakz.billsplit.data.Person;
+import com.github.jakz.billsplit.data.Pool;
 import com.github.jakz.billsplit.data.Timestamp;
 import com.pixbits.lib.lang.Pair;
 import com.pixbits.lib.ui.charts.Measurable;
@@ -48,6 +49,11 @@ public class Expense implements Measurable
     );
   }
   
+  public static Expense of(ExpenseAmounts amounts, WeightedGroup sharers, Timestamp timestamp, Category category, String title)
+  {
+    return new Expense(amounts, timestamp, sharers, category, title);
+  }
+  
   public static Expense of(ExpenseAmounts amounts, WeightedGroup sharers)
   {
     return new Expense(amounts, null, sharers, null, null);
@@ -66,6 +72,11 @@ public class Expense implements Measurable
   public static Expense of(Amount amount, Person owner, Timestamp timestamp, Category category, String title)
   {
     return new Expense(amount, owner, timestamp, owner.group(), category, title);
+  }
+  
+  public static Expense deposit(Amount amount, Person owner, Pool pool, Timestamp timestamp) //TODO: title by argument?
+  {
+    return new Expense(new ExpenseAmounts(owner, amount), timestamp, new WeightedGroup(pool), DefaultCategory.POOL_DEPOSIT, "Money Pool deposit");
   }
   
   public void add(Amount amount, Person owner)

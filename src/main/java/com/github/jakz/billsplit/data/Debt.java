@@ -54,4 +54,6 @@ public class Debt
     else
       return new Debt(debtor, creditor, amount.subtract(other.amount));
   }
+  
+  public static Debt of(Person debtor, Amount amount, Person creditor) { return new Debt(debtor, creditor, amount); }
 }

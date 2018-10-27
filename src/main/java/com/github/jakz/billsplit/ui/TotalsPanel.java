@@ -15,6 +15,7 @@ import com.github.jakz.billsplit.Summarizers;
 import com.github.jakz.billsplit.data.Category;
 import com.github.jakz.billsplit.data.Currency;
 import com.github.jakz.billsplit.data.Person;
+import com.github.jakz.billsplit.data.Timestamp;
 import com.pixbits.lib.lang.StringUtils;
 import com.pixbits.lib.ui.color.ColorCache;
 import com.pixbits.lib.ui.color.HashColorCache;
@@ -27,6 +28,7 @@ public class TotalsPanel extends JPanel
   private SummaryTablePanel<Person> totalsSpent;
   
   private SummaryTablePanel<Category> totalsByCategory;
+  private SummaryTablePanel<Timestamp> totalsByDay;
   
   ColorCache<Person> colorCachePersons;
   
@@ -35,10 +37,12 @@ public class TotalsPanel extends JPanel
     totalsOwed = new SummaryTablePanel<>(new Dimension(300,200), null);
     totalsSpent = new SummaryTablePanel<>(new Dimension(300,200), null);
     totalsByCategory = new SummaryTablePanel<>(new Dimension(300,200), null);
+    totalsByDay = new SummaryTablePanel<>(new Dimension(300, 200), null);
     
     totalsOwed.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Amount Owed"));
     totalsSpent.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Amount Spent"));
     totalsByCategory.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Expenses by type"));
+    totalsByDay.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Expenses by day"));
 
     colorCachePersons = new HashColorCache<>(new PastelColorGenerator());
     
@@ -51,6 +55,7 @@ public class TotalsPanel extends JPanel
     tables.add(totalsOwed);
     tables.add(totalsByCategory);
     tables.add(totalsSpent);
+    tables.add(totalsByDay);
     
     this.add(tables, BorderLayout.CENTER);    
   }
@@ -69,6 +74,8 @@ public class TotalsPanel extends JPanel
     this.totalsByCategory.setBehavior(SummaryBarBehavior.ofAveraging(totalsByCategory, t -> t.amount.convert(Currency.EUR).unprecise(), (t,f) -> StringUtils.toPercent(f, 2)+"%"));
     this.totalsByCategory.setData(DataSource.of(totalsByCategory));
 
-
+    List<SummaryEntry<Timestamp>> totalsByDay = Summarizers.byDay(expenses, Currency.EUR);
+    this.totalsByDay.setBehavior(SummaryBarBehavior.ofAveraging(totalsByDay, t -> t.amount.convert(Currency.EUR).unprecise(), (t,f) -> StringUtils.toPercent(f, 2)+"%"));
+    this.totalsByDay.setData(DataSource.of(totalsByDay));
   }
 }

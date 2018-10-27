@@ -128,10 +128,9 @@ public class Settler
     cycles = cycles.stream()
       .filter(s -> s.size() > 1)
       .collect(Collectors.toSet());
-    
+        
     cycles.forEach(cycle -> {
       List<Debt> involvedDebts = cycle.stream()
-        .filter(s -> s.origin() != null)
         .map(s -> s.origin())
         .map(e -> e.data())
         .collect(Collectors.toList());
@@ -140,9 +139,14 @@ public class Settler
         throw new IllegalArgumentException("Can't settle a cycle made of multiple currencies");
       
       Amount commonValue = involvedDebts.stream().map(Debt::amount).min(Comparator.naturalOrder()).get();
+      System.out.println("Cycles: "+commonValue);
+      System.out.println("Involved: "+involvedDebts.stream().map(Object::toString).collect(Collectors.joining(",")));
+
       
       involvedDebts.forEach(debt -> debt.amount.subtract(commonValue));
     });
+    
+
     
     debts.removeIf(d -> d.amount.isZero());
     
